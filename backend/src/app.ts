@@ -10,9 +10,9 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         return {
             statusCode: 200,
             headers: {
-                "Content-Type": "application.json",
-                "Access=Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "POST: OPTIONS",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
                 "Access-Control-Allow-Headers": "Content-Type"
             },
             body: JSON.stringify({ breakEvenPrice: result })
