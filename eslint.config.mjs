@@ -1,42 +1,38 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import globals from "globals";
+import stylistic from "@stylistic/eslint-plugin";
 
 export default tseslint.config(
-    // 1. Global Ignores (Must be first)
     {
-        ignores: ["**/node_modules/", "**/dist/", "**/.aws-sam/"]
+        ignores: ["**/node_modules/", "**/dist/", "**/.aws-sam/", "frontend/dist/"]
     },
-
-    // 2. Recommended Base
     js.configs.recommended,
     ...tseslint.configs.recommended,
-
-    // 3. Custom Overrides
     {
         files: ["**/*.{ts,tsx,js,jsx}"],
+        plugins: {
+            "@stylistic": stylistic
+        },
         languageOptions: {
-            ecmaVersion: "latest",
-            sourceType: "module",
             globals: {
                 ...globals.node,
                 ...globals.browser
             }
         },
-
         rules: {
-            // Formatting Overrides
-            "indent": ["error", 4, { "SwitchCase": 1 }],
-            "quotes": ["error", "double"],
-            "semi": ["error", "always"],
-            "eol-last": ["error", "always"],
-            "object-curly-spacing": ["error", "always"],
-            "arrow-spacing": ["error", { "before": true, "after": true }],
-            "space-before-function-paren": ["error", "always"],
-
-            // Avoid conflicts
+            // Core Stylistic & Formatting
+            "@stylistic/indent": ["error", 4, { "SwitchCase": 1 }],
+            "@stylistic/quotes": ["error", "double"],
+            "@stylistic/semi": ["error", "always"],
+            "@stylistic/object-curly-spacing": ["error", "always"],
+            "@stylistic/arrow-spacing": ["error", { "before": true, "after": true }],
+            "@stylistic/eol-last": ["error", "always"],
+            "@stylistic/no-trailing-spaces": "error",
+            
+            // Logic & Types
             "no-unused-vars": "off",
-            "@typescript-eslint/no-unused-vars": "warn"
+            "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
         }
     }
 );
