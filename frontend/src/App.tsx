@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import type { CalculationInputs } from "@shared/types";
+import { fetchBreakEven } from "./services/api";
+import { ROCKLAND_DEFAULTS } from "./config/defaults";
 import {
     GlobalStyle,
     Container,
@@ -15,37 +17,26 @@ import {
     SectionLabel,
 } from "./components/Library";
 
-const ROCKLAND_DEFAULTS: CalculationInputs = {
-    itemCost: 0,
-    handlingFee: 0,
-    fixedFee: 0.3,
-    fvfRate: 13.25,
-    adRate: 2.0,
-    taxRate: 8.375,
-};
-
 function App() {
     const [inputs, setInputs] = useState<CalculationInputs>(ROCKLAND_DEFAULTS);
     const [breakEven, setBreakEven] = useState<number>(0);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        const { itemCost, handlingFee, fixedFee, fvfRate, adRate, taxRate } =
-            inputs;
-        const F = fvfRate / 100;
-        const A = adRate / 100;
-        const T = taxRate / 100;
-
-        const denominator = 1 - (F + A) * (1 + T);
-
-        if (denominator > 0 && itemCost > 0) {
-            const price = (itemCost + handlingFee + fixedFee) / denominator;
-            setBreakEven(price);
-        } else {
+        if (inputs.itemCost === 0) {
             setBreakEven(0);
+            return;
         }
-    }, [inputs]);
 
-    const resetForm = () => setInputs(ROCKLAND_DEFAULTS);
+        const getCalculation = async () => {
+            setIsLoading(true);
+            const result = await fetchBreakEven(inputs);
+            setBreakEven(result);
+            setIsLoading(false);
+        };
+
+        getCalculation();
+    }, [inputs]);
 
     const handleUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -58,7 +49,12 @@ function App() {
     return (
         <>
             <GlobalStyle />
-            <Container>
+            <Container
+                style={{
+                    opacity: isLoading ? 0.7 : 1,
+                    transition: "opacity 0.2s",
+                }}
+            >
                 <Title>MarginLogic</Title>
                 <HelpText>Live Sourcing Analysis</HelpText>
 
@@ -68,82 +64,87 @@ function App() {
                     }
                 >
                     <Label>Break-Even Price</Label>
-                    <PriceDisplay>${breakEven.toFixed(2)}</PriceDisplay>
+                    <PriceDisplay>
+                        {isLoading
+                            ? "Calculating..."
+                            : `$${breakEven.toFixed(2)}`}
+                    </PriceDisplay>
                     <HelpText>Includes fees and local sales tax.</HelpText>
                 </ResultCard>
 
                 <InputGrid>
-                    {/* GROUP 1: FIELD SOURCING DATA */}
                     <SectionLabel>Sourcing Data</SectionLabel>
+                    {[
+                        {
+                            label: "Item Cost ($)",
+                            name: "itemCost",
+                            step: "0.01",
+                        },
+                        {
+                            label: "Handling/Shipping ($)",
+                            name: "handlingFee",
+                            step: "0.01",
+                        },
+                        {
+                            label: "Sales Tax (%)",
+                            name: "taxRate",
+                            step: "0.1",
+                        },
+                    ].map((field) => (
+                        <InputWrapper key={field.name}>
+                            <Label>{field.label}</Label>
+                            <Input
+                                name={field.name}
+                                type="number"
+                                step={field.step}
+                                value={
+                                    inputs[
+                                        field.name as keyof CalculationInputs
+                                    ] || ""
+                                }
+                                onChange={handleUpdate}
+                            />
+                        </InputWrapper>
+                    ))}
 
-                    <InputWrapper>
-                        <Label>Item Cost ($)</Label>
-                        <Input
-                            name="itemCost"
-                            type="number"
-                            step="0.01"
-                            value={inputs.itemCost || ""}
-                            onChange={handleUpdate}
-                        />
-                    </InputWrapper>
-
-                    <InputWrapper>
-                        <Label>Handling/Shipping ($)</Label>
-                        <Input
-                            name="handlingFee"
-                            type="number"
-                            step="0.01"
-                            value={inputs.handlingFee || ""}
-                            onChange={handleUpdate}
-                        />
-                    </InputWrapper>
-
-                    <InputWrapper>
-                        <Label>Sales Tax (%)</Label>
-                        <Input
-                            name="taxRate"
-                            type="number"
-                            value={inputs.taxRate || ""}
-                            onChange={handleUpdate}
-                        />
-                    </InputWrapper>
-
-                    {/* GROUP 2: PLATFORM METADATA (API TARGETS) */}
                     <SectionLabel>Platform Fees</SectionLabel>
-
-                    <InputWrapper>
-                        <Label>eBay Ad Rate (%)</Label>
-                        <Input
-                            name="adRate"
-                            type="number"
-                            value={inputs.adRate || ""}
-                            onChange={handleUpdate}
-                        />
-                    </InputWrapper>
-
-                    <InputWrapper>
-                        <Label>eBay FVF (%)</Label>
-                        <Input
-                            name="fvfRate"
-                            type="number"
-                            value={inputs.fvfRate || ""}
-                            onChange={handleUpdate}
-                        />
-                    </InputWrapper>
-
-                    <InputWrapper>
-                        <Label>Fixed Fee ($)</Label>
-                        <Input
-                            name="fixedFee"
-                            type="number"
-                            step="0.01"
-                            value={inputs.fixedFee || ""}
-                            onChange={handleUpdate}
-                        />
-                    </InputWrapper>
+                    {[
+                        {
+                            label: "eBay Ad Rate (%)",
+                            name: "adRate",
+                            step: "0.1",
+                        },
+                        {
+                            label: "eBay FVF (%)",
+                            name: "fvfRate",
+                            step: "0.01",
+                        },
+                        {
+                            label: "Fixed Fee ($)",
+                            name: "fixedFee",
+                            step: "0.01",
+                        },
+                    ].map((field) => (
+                        <InputWrapper key={field.name}>
+                            <Label>{field.label}</Label>
+                            <Input
+                                name={field.name}
+                                type="number"
+                                step={field.step}
+                                value={
+                                    inputs[
+                                        field.name as keyof CalculationInputs
+                                    ] || ""
+                                }
+                                onChange={handleUpdate}
+                            />
+                        </InputWrapper>
+                    ))}
                 </InputGrid>
 
-                <GhostButton onClick={resetForm}>Reset All Fields</GhostButton>
+                <GhostButton onClick={() => setInputs(ROCKLAND_DEFAULTS)}>
+                    Reset All Fields
+                </GhostButton>
             </Container>
         </>
     );

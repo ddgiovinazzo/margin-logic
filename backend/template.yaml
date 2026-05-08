@@ -2,15 +2,23 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: MarginLogic Default Setup
 
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'POST,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      AllowOrigin: "'http://localhost:5173'"
+
 Resources:
   MarginLogicFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./
-      Handler: app.lambdaHandler
+      Handler: src/app.lambdaHandler
       Runtime: nodejs20.x
-      Architectures:
-        - x86_64
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: "http://localhost:5173"
       Events:
         Calculate:
           Type: Api
