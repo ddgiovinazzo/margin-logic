@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { CalculationInputs } from "@shared/types";
 import { fetchBreakEven } from "./services/api";
 import { ROCKLAND_DEFAULTS } from "./config/defaults";
@@ -16,7 +16,9 @@ import {
     HelpText,
     GhostButton,
     SectionLabel,
-} from "./components/Library";
+    SrOnly, // Added for accessibility
+} from "./styles/Library";
+import { calculateSourcingHealth, ProfitStatus } from "./utils/sourcing";
 
 function App() {
     const [inputs, setInputs] = useState<CalculationInputs>(ROCKLAND_DEFAULTS);
@@ -24,6 +26,19 @@ function App() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const debouncedInputs = useDebounce(inputs, 300);
+
+    const analysis = useMemo(() => {
+        if (isLoading) {
+            return {
+                status: "neutral" as ProfitStatus,
+                profit: 0,
+                margin: 0,
+                label: "Calculating margin...",
+            };
+        }
+
+        return calculateSourcingHealth(inputs.marketPrice, breakEven);
+    }, [inputs.marketPrice, breakEven, isLoading]);
 
     useEffect(() => {
         if (!debouncedInputs.itemCost || debouncedInputs.itemCost <= 0) {
@@ -50,42 +65,93 @@ function App() {
         const { name, value } = e.target;
         setInputs((prev) => ({
             ...prev,
-            [name]: parseFloat(value) || 0,
+            [name]: value === "" ? "" : parseFloat(value),
         }));
     };
 
     return (
         <>
             <GlobalStyle />
-            <Container
-                style={{
-                    opacity: isLoading ? 0.7 : 1,
-                    transition: "opacity 0.2s",
-                }}
-            >
-                <Title>MarginLogic</Title>
-                <HelpText>Live Sourcing Analysis</HelpText>
+            <Container as="main" style={{ opacity: isLoading ? 0.7 : 1 }}>
+                <header>
+                    <Title>MarginLogic</Title>
+                    <HelpText style={{ textAlign: "center" }}>
+                        Live Sourcing Analysis
+                    </HelpText>
+                </header>
 
                 <ResultCard
-                    $isPositive={
-                        breakEven > inputs.itemCost * 1.3 && inputs.itemCost > 0
-                    }
+                    as="section"
+                    $status={analysis.status}
+                    aria-live="polite"
+                    aria-atomic="true"
                 >
-                    <Label>Break-Even Price</Label>
+                    <Label as="h2">Break-Even Price</Label>
                     <PriceDisplay>
-                        {isLoading
-                            ? "Calculating..."
-                            : `$${breakEven.toFixed(2)}`}
+                        <SrOnly>The break-even price is </SrOnly>
+                        {isLoading ? "..." : `$${breakEven.toFixed(2)}`}
                     </PriceDisplay>
-                    <HelpText>Includes fees and local sales tax.</HelpText>
+
+                    <div
+                        style={{
+                            marginTop: "16px",
+                            borderTop: "1px solid rgba(0,0,0,0.1)",
+                            paddingTop: "16px",
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "space-around",
+                            }}
+                        >
+                            <div>
+                                <Label>Est. Profit</Label>
+                                <div
+                                    style={{
+                                        fontSize: "1.4rem",
+                                        fontWeight: "900",
+                                    }}
+                                >
+                                    ${analysis.profit.toFixed(2)}
+                                </div>
+                            </div>
+                            <div>
+                                <Label>Margin</Label>
+                                <div
+                                    style={{
+                                        fontSize: "1.4rem",
+                                        fontWeight: "900",
+                                    }}
+                                >
+                                    {analysis.margin.toFixed(1)}%
+                                </div>
+                            </div>
+                        </div>
+                        <HelpText
+                            style={{
+                                marginTop: "12px",
+                                fontWeight: "600",
+                                color: "inherit",
+                                fontSize: "0.95rem",
+                            }}
+                        >
+                            {analysis.label}
+                        </HelpText>
+                    </div>
                 </ResultCard>
 
-                <InputGrid>
+                <InputGrid as="form">
                     <SectionLabel>Sourcing Data</SectionLabel>
                     {[
                         {
                             label: "Item Cost ($)",
                             name: "itemCost",
+                            step: "0.01",
+                        },
+                        {
+                            label: "Avg. Sold Price ($)",
+                            name: "marketPrice",
                             step: "0.01",
                         },
                         {
@@ -100,15 +166,16 @@ function App() {
                         },
                     ].map((field) => (
                         <InputWrapper key={field.name}>
-                            <Label>{field.label}</Label>
+                            <Label htmlFor={field.name}>{field.label}</Label>
                             <Input
+                                id={field.name}
                                 name={field.name}
                                 type="number"
                                 step={field.step}
                                 value={
                                     inputs[
                                         field.name as keyof CalculationInputs
-                                    ] || ""
+                                    ] ?? ""
                                 }
                                 onChange={handleUpdate}
                             />
@@ -134,15 +201,16 @@ function App() {
                         },
                     ].map((field) => (
                         <InputWrapper key={field.name}>
-                            <Label>{field.label}</Label>
+                            <Label htmlFor={field.name}>{field.label}</Label>
                             <Input
+                                id={field.name}
                                 name={field.name}
                                 type="number"
                                 step={field.step}
                                 value={
                                     inputs[
                                         field.name as keyof CalculationInputs
-                                    ] || ""
+                                    ] ?? ""
                                 }
                                 onChange={handleUpdate}
                             />

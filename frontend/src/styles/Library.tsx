@@ -1,5 +1,3 @@
-import styled, { createGlobalStyle } from "styled-components";
-
 /**
  * MARGINLOGIC COMPONENT LIBRARY GUIDELINES
  * ========================================
@@ -16,42 +14,37 @@ import styled, { createGlobalStyle } from "styled-components";
  * to ensure usability in store aisles.
  */
 
+import styled, { createGlobalStyle } from "styled-components";
+import { colors } from "./colors";
+import { ProfitStatus } from "../utils/sourcing";
+
 export const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    background-color: #f8f9fa;
-    color: #1a1a1a;
+    background-color: ${colors.background};
+    color: ${colors.textPrimary};
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: 1.5;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  input {
-    color: #1a1a1a !important;
-    font-family: inherit;
   }
 `;
 
-export const Container = styled.div`
+export const Container = styled.main`
     padding: 1.25rem;
     max-width: 500px;
     margin: 0 auto;
-    background-color: #ffffff;
     min-height: 100vh;
 `;
 
 export const Title = styled.h1`
     font-size: 1.75rem;
     font-weight: 800;
-    color: #1a1a1a;
-    margin-bottom: 0.25rem;
+    color: ${colors.textPrimary};
     text-align: center;
 `;
 
@@ -59,12 +52,13 @@ export const Label = styled.label`
     display: block;
     font-size: 0.75rem;
     font-weight: 700;
-    color: #666;
+    color: ${colors.textSecondary};
     margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 `;
 
+/* RESTORED: Grid and Wrapper for form structure */
 export const InputGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr;
@@ -78,107 +72,88 @@ export const InputWrapper = styled.div`
 `;
 
 export const Input = styled.input.attrs({
-    onWheel: (e: React.WheelEvent<HTMLInputElement>) => e.currentTarget.blur(),
+    onWheel: (e) => e.currentTarget.blur(),
 })`
     width: 100%;
     padding: 1rem;
     font-size: 1.1rem;
-    border: 2px solid #e1e1e1;
+    border: 2px solid ${colors.border};
     border-radius: 12px;
-    box-sizing: border-box;
-    transition: all 0.2s ease-in-out;
-    background-color: #fafafa;
-    -webkit-appearance: none;
-    appearance: none;
+    background-color: ${colors.surface};
+    transition: all 0.2s;
 
     &:focus {
         outline: none;
-        border-color: #0056b3;
-        background-color: #ffffff;
-        box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+        border-color: ${colors.primary};
+        background-color: ${colors.background};
+        box-shadow: 0 0 0 4px rgba(26, 26, 26, 0.05);
     }
 `;
 
-export const ResultCard = styled.div<{ $isPositive?: boolean }>`
+export const ResultCard = styled.section<{ $status: ProfitStatus }>`
     margin-top: 2rem;
     padding: 1.5rem;
     border-radius: 16px;
-    background-color: ${(props) => (props.$isPositive ? "#e7f5ed" : "#f8f9fa")};
-    border: 2px solid ${(props) => (props.$isPositive ? "#2e7d32" : "#dee2e6")};
-    text-align: center;
     transition: all 0.3s ease;
+    text-align: center;
+    background-color: ${(props) =>
+        colors[`${props.$status}Bg` as keyof typeof colors] || colors.surface};
+    border: 2px solid
+        ${(props) =>
+            colors[props.$status as keyof typeof colors] || colors.border};
 `;
 
 export const PriceDisplay = styled.div`
     font-size: 3.5rem;
     font-weight: 900;
-    color: #1a1a1a;
-    margin: 0.5rem 0;
+    color: ${colors.textPrimary};
     letter-spacing: -2px;
 `;
 
+/* RESTORED: For sub-labels and instructions */
 export const HelpText = styled.p`
     font-size: 0.85rem;
-    color: #6c757d;
+    color: ${colors.textMuted};
     margin-top: 0.5rem;
     line-height: 1.4;
-`;
-
-export const Badge = styled.span`
-    padding: 0.25rem 0.75rem;
-    border-radius: 99px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    background-color: #e9ecef;
-    color: #495057;
-`;
-
-export const Button = styled.button`
-    width: 100%;
-    padding: 1rem;
-    margin-top: 1.5rem;
-    background-color: #1a1a1a;
-    color: #ffffff;
-    font-size: 1.1rem;
-    font-weight: 700;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:active {
-        background-color: #333333;
-        transform: translateY(1px);
-    }
 `;
 
 export const GhostButton = styled.button`
     width: 100%;
     padding: 1rem;
     margin-top: 0.75rem;
-    background-color: transparent;
-    color: #666;
+    background: transparent;
+    color: ${colors.textSecondary};
     font-size: 0.9rem;
     font-weight: 600;
-    border: 2px solid #e1e1e1;
+    border: 2px solid ${colors.border};
     border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s;
 
     &:active {
-        background-color: #f8f9fa;
-        border-color: #ccc;
+        background-color: ${colors.surface};
     }
 `;
 
 export const SectionLabel = styled.h2`
     font-size: 0.65rem;
     font-weight: 800;
-    color: #aaa;
+    color: ${colors.textMuted};
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin: 1.5rem 0 0.5rem 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid ${colors.border};
     padding-bottom: 0.25rem;
+`;
+
+export const SrOnly = styled.span`
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 `;
