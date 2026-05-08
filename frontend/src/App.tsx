@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { CalculationInputs } from "@shared/types";
 import {
     GlobalStyle,
     Container,
@@ -14,16 +15,7 @@ import {
     SectionLabel,
 } from "./components/Library";
 
-interface SourcingInputs {
-    itemCost: number;
-    handlingFee: number;
-    fixedFee: number;
-    fvfRate: number;
-    adRate: number;
-    taxRate: number;
-}
-
-const ROCKLAND_DEFAULTS: SourcingInputs = {
+const ROCKLAND_DEFAULTS: CalculationInputs = {
     itemCost: 0,
     handlingFee: 0,
     fixedFee: 0.3,
@@ -33,7 +25,7 @@ const ROCKLAND_DEFAULTS: SourcingInputs = {
 };
 
 function App() {
-    const [inputs, setInputs] = useState<SourcingInputs>(ROCKLAND_DEFAULTS);
+    const [inputs, setInputs] = useState<CalculationInputs>(ROCKLAND_DEFAULTS);
     const [breakEven, setBreakEven] = useState<number>(0);
 
     useEffect(() => {

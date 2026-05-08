@@ -1,13 +1,13 @@
-import { CalculationInputs } from "./types";
+import type { CalculationInputs } from "@shared/types";
 
 export const calculateBreakEven = (data: CalculationInputs): string => {
-    const { itemCost, handlingFee, ebayFixedFee } = data;
+    const { itemCost, handlingFee, fixedFee } = data;
 
-    const F = data.finalValueFeeRate / 100;
-    const A = data.adFeeRate / 100;
-    const T = data.salesTaxRate / 100;
+    const F = data.fvfRate / 100;
+    const A = data.adRate / 100;
+    const T = data.taxRate / 100;
 
-    const numerator = itemCost + handlingFee + ebayFixedFee;
+    const numerator = itemCost + handlingFee + fixedFee;
     const denominator = 1 - (F + A) * (1 + T);
 
     if (denominator <= 0) {
