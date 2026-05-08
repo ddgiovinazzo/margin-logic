@@ -1,122 +1,160 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect } from "react";
+import {
+    GlobalStyle,
+    Container,
+    Title,
+    InputGrid,
+    InputWrapper,
+    Label,
+    Input,
+    ResultCard,
+    PriceDisplay,
+    HelpText,
+    GhostButton,
+    SectionLabel,
+} from "./components/Library";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+interface SourcingInputs {
+    itemCost: number;
+    handlingFee: number;
+    fixedFee: number;
+    fvfRate: number;
+    adRate: number;
+    taxRate: number;
 }
 
-export default App
+const ROCKLAND_DEFAULTS: SourcingInputs = {
+    itemCost: 0,
+    handlingFee: 0,
+    fixedFee: 0.3,
+    fvfRate: 13.25,
+    adRate: 2.0,
+    taxRate: 8.375,
+};
+
+function App() {
+    const [inputs, setInputs] = useState<SourcingInputs>(ROCKLAND_DEFAULTS);
+    const [breakEven, setBreakEven] = useState<number>(0);
+
+    useEffect(() => {
+        const { itemCost, handlingFee, fixedFee, fvfRate, adRate, taxRate } =
+            inputs;
+        const F = fvfRate / 100;
+        const A = adRate / 100;
+        const T = taxRate / 100;
+
+        const denominator = 1 - (F + A) * (1 + T);
+
+        if (denominator > 0 && itemCost > 0) {
+            const price = (itemCost + handlingFee + fixedFee) / denominator;
+            setBreakEven(price);
+        } else {
+            setBreakEven(0);
+        }
+    }, [inputs]);
+
+    const resetForm = () => setInputs(ROCKLAND_DEFAULTS);
+
+    const handleUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setInputs((prev) => ({
+            ...prev,
+            [name]: parseFloat(value) || 0,
+        }));
+    };
+
+    return (
+        <>
+            <GlobalStyle />
+            <Container>
+                <Title>MarginLogic</Title>
+                <HelpText>Live Sourcing Analysis</HelpText>
+
+                <ResultCard
+                    $isPositive={
+                        breakEven > inputs.itemCost * 1.3 && inputs.itemCost > 0
+                    }
+                >
+                    <Label>Break-Even Price</Label>
+                    <PriceDisplay>${breakEven.toFixed(2)}</PriceDisplay>
+                    <HelpText>Includes fees and local sales tax.</HelpText>
+                </ResultCard>
+
+                <InputGrid>
+                    {/* GROUP 1: FIELD SOURCING DATA */}
+                    <SectionLabel>Sourcing Data</SectionLabel>
+
+                    <InputWrapper>
+                        <Label>Item Cost ($)</Label>
+                        <Input
+                            name="itemCost"
+                            type="number"
+                            step="0.01"
+                            value={inputs.itemCost || ""}
+                            onChange={handleUpdate}
+                        />
+                    </InputWrapper>
+
+                    <InputWrapper>
+                        <Label>Handling/Shipping ($)</Label>
+                        <Input
+                            name="handlingFee"
+                            type="number"
+                            step="0.01"
+                            value={inputs.handlingFee || ""}
+                            onChange={handleUpdate}
+                        />
+                    </InputWrapper>
+
+                    <InputWrapper>
+                        <Label>Sales Tax (%)</Label>
+                        <Input
+                            name="taxRate"
+                            type="number"
+                            value={inputs.taxRate || ""}
+                            onChange={handleUpdate}
+                        />
+                    </InputWrapper>
+
+                    {/* GROUP 2: PLATFORM METADATA (API TARGETS) */}
+                    <SectionLabel>Platform Fees</SectionLabel>
+
+                    <InputWrapper>
+                        <Label>eBay Ad Rate (%)</Label>
+                        <Input
+                            name="adRate"
+                            type="number"
+                            value={inputs.adRate || ""}
+                            onChange={handleUpdate}
+                        />
+                    </InputWrapper>
+
+                    <InputWrapper>
+                        <Label>eBay FVF (%)</Label>
+                        <Input
+                            name="fvfRate"
+                            type="number"
+                            value={inputs.fvfRate || ""}
+                            onChange={handleUpdate}
+                        />
+                    </InputWrapper>
+
+                    <InputWrapper>
+                        <Label>Fixed Fee ($)</Label>
+                        <Input
+                            name="fixedFee"
+                            type="number"
+                            step="0.01"
+                            value={inputs.fixedFee || ""}
+                            onChange={handleUpdate}
+                        />
+                    </InputWrapper>
+                </InputGrid>
+
+                <GhostButton onClick={resetForm}>Reset All Fields</GhostButton>
+            </Container>
+        </>
+    );
+}
+
+export default App;

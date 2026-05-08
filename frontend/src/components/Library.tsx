@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 
 /**
  * MARGINLOGIC COMPONENT LIBRARY GUIDELINES
@@ -16,17 +16,37 @@ import styled from "styled-components";
  * to ensure usability in store aisles.
  */
 
-// 1. The Layout Shell
+export const GlobalStyle = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #f8f9fa;
+    color: #1a1a1a;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input {
+    color: #1a1a1a !important;
+    font-family: inherit;
+  }
+`;
+
 export const Container = styled.div`
-    padding: 1.25rem; 
-    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    padding: 1.25rem;
     max-width: 500px;
     margin: 0 auto;
     background-color: #ffffff;
     min-height: 100vh;
 `;
 
-// 2. High-Contrast Typography
 export const Title = styled.h1`
     font-size: 1.75rem;
     font-weight: 800;
@@ -45,7 +65,6 @@ export const Label = styled.label`
     letter-spacing: 0.05em;
 `;
 
-// 3. Form Elements
 export const InputGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr;
@@ -58,17 +77,19 @@ export const InputWrapper = styled.div`
     flex-direction: column;
 `;
 
-export const Input = styled.input`
+export const Input = styled.input.attrs({
+    onWheel: (e: React.WheelEvent<HTMLInputElement>) => e.currentTarget.blur(),
+})`
     width: 100%;
-    padding: 1rem; 
+    padding: 1rem;
     font-size: 1.1rem;
     border: 2px solid #e1e1e1;
     border-radius: 12px;
     box-sizing: border-box;
     transition: all 0.2s ease-in-out;
     background-color: #fafafa;
-    -webkit-appearance: none; 
-    appearance: none; 
+    -webkit-appearance: none;
+    appearance: none;
 
     &:focus {
         outline: none;
@@ -78,13 +99,12 @@ export const Input = styled.input`
     }
 `;
 
-// 4. The Result Card (The "Should I Buy?" Engine)
 export const ResultCard = styled.div<{ $isPositive?: boolean }>`
     margin-top: 2rem;
     padding: 1.5rem;
     border-radius: 16px;
-    background-color: ${props => props.$isPositive ? "#e7f5ed" : "#f8f9fa"};
-    border: 2px solid ${props => props.$isPositive ? "#2e7d32" : "#dee2e6"};
+    background-color: ${(props) => (props.$isPositive ? "#e7f5ed" : "#f8f9fa")};
+    border: 2px solid ${(props) => (props.$isPositive ? "#2e7d32" : "#dee2e6")};
     text-align: center;
     transition: all 0.3s ease;
 `;
@@ -104,7 +124,6 @@ export const HelpText = styled.p`
     line-height: 1.4;
 `;
 
-// 5. Utility Atoms
 export const Badge = styled.span`
     padding: 0.25rem 0.75rem;
     border-radius: 99px;
@@ -113,4 +132,53 @@ export const Badge = styled.span`
     text-transform: uppercase;
     background-color: #e9ecef;
     color: #495057;
+`;
+
+export const Button = styled.button`
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:active {
+        background-color: #333333;
+        transform: translateY(1px);
+    }
+`;
+
+export const GhostButton = styled.button`
+    width: 100%;
+    padding: 1rem;
+    margin-top: 0.75rem;
+    background-color: transparent;
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 2px solid #e1e1e1;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:active {
+        background-color: #f8f9fa;
+        border-color: #ccc;
+    }
+`;
+
+export const SectionLabel = styled.h2`
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 1.5rem 0 0.5rem 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.25rem;
 `;
