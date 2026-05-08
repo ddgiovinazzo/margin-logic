@@ -1,25 +1,26 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: MarginLogic - eBay Profitability Calculator API
+Description: MarginLogic Default Setup
 
 Resources:
   MarginLogicFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./
-      Handler: dist/app.lambdaHandler
+      Handler: app.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
         - x86_64
       Events:
-        CalculateApi:
+        Calculate:
           Type: Api
           Properties:
             Path: /calculate
             Method: post
-
-Outputs:
-  MarginLogicApiUrl:
-    Description: "API Gateway endpoint URL"
-    Value:
-      Fn::Sub: "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/calculate/"
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        EntryPoints: 
+          - src/app.ts

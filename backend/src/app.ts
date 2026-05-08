@@ -2,10 +2,15 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { CalculationInputs } from "./types";
 import { calculateBreakEven } from "./calculator";
 
-export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const lambdaHandler = async (
+    event: APIGatewayProxyEvent,
+): Promise<APIGatewayProxyResult> => {
     try {
         const body = JSON.parse(event.body || "{}") as CalculationInputs;
+        console.log("Received Body:", body);
+
         const result = calculateBreakEven(body);
+        console.log("Calculation Result:", result);
 
         return {
             statusCode: 200,
@@ -13,17 +18,15 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type"
+                "Access-Control-Allow-Headers": "Content-Type",
             },
-            body: JSON.stringify({ breakEvenPrice: result })
+            body: JSON.stringify({ breakEvenPrice: result }),
         };
-    } catch(error){
+    } catch (error) {
         console.error("Calculation Error:", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: "Internal Server Error" })
+            body: JSON.stringify({ message: "Internal Server Error" }),
         };
-
     }
-
 };
