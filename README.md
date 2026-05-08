@@ -9,9 +9,10 @@ Unlike generic calculators, MarginLogic implements a **"Green-Light" sourcing wo
 * **Touch-Target Optimization:** 1rem (16px) minimum padding for field-ready use.
 * **Visual Confidence:** Immediate color-coded feedback on sourcing profitability.
 * **Precision Math:** Implements the proprietary break-even formula via a centralized AWS Lambda microservice:
-  $$
-  P = (C + H + \text{Fixed Fee}) / (1 - (F+A) * (1+T))
-  $$
+
+$$
+P = (C + H + \text{Fixed Fee}) / (1 - (F+A) * (1+T))
+$$
 
 ---
 
