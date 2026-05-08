@@ -1,45 +1,73 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { CalculationInputs } from "@shared/types";
-import { calculateBreakEven } from "./calculator";
-
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || "http://localhost:5173";
-
-const HEADERS = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-};
+import { validateInputs } from "./utils/validator";
 
 export const lambdaHandler = async (
     event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
-    const incomingOrigin =
-        event.headers.Origin || event.headers.origin || "Unknown";
-    console.log(`[DEBUG] Method: ${event.httpMethod}`);
-    console.log(`[DEBUG] Browser sent Origin: ${incomingOrigin}`);
-    if (event.httpMethod === "OPTIONS") {
-        return { statusCode: 200, headers: HEADERS, body: "" };
-    }
+    const headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+    };
 
     try {
-        const body = JSON.parse(event.body || "{}") as CalculationInputs;
+        if (!event.body) {
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({
+                    error: "Bad Request",
+                    message: "Missing request body",
+                }),
+            };
+        }
 
-        console.log(`Calculating for: ${body.itemCost} @ ${body.taxRate}% tax`);
+        const rawData: unknown = JSON.parse(event.body);
+        const validatedInputs = validateInputs(rawData);
 
-        const result = calculateBreakEven(body);
+        // 4. Domain Logic: Execute the Formula
+        // P = (C + H + Fixed Fee) / (1 - (F+A) * (1+T))
+        const { itemCost, handlingFee, taxRate, fvfRate, adRate, fixedFee } =
+            validatedInputs;
+
+        const combinedFees = fvfRate / 100 + adRate / 100;
+        const taxMultiplier = 1 + taxRate / 100;
+        const denominator = 1 - combinedFees * taxMultiplier;
+
+        if (denominator <= 0) {
+            throw new Error(
+                "Fee structure exceeds 100% of value. Check rates.",
+            );
+        }
+
+        console.log("Inputs received:", validatedInputs);
+        const breakEven = (itemCost + handlingFee + fixedFee) / denominator;
+        console.log("Calculated Break Even:", breakEven);
 
         return {
             statusCode: 200,
-            headers: HEADERS,
-            body: JSON.stringify({ breakEvenPrice: result }),
+            headers,
+            body: JSON.stringify({
+                breakEven: parseFloat(breakEven.toFixed(2)),
+            }),
         };
-    } catch (error) {
-        console.error("Calculation Error:", error);
+    } catch (error: unknown) {
+        const isValidationError =
+            error instanceof Error &&
+            error.message.includes("Validation Error");
+        const message =
+            error instanceof Error ? error.message : "Internal Server Error";
+
+        console.error(`[Handler Error]: ${message}`);
+
         return {
-            statusCode: 500,
-            headers: HEADERS,
-            body: JSON.stringify({ message: "Internal Server Error" }),
+            statusCode: isValidationError ? 422 : 500,
+            headers,
+            body: JSON.stringify({
+                error: isValidationError
+                    ? "Validation Failed"
+                    : "Calculation Error",
+                message,
+            }),
         };
     }
 };

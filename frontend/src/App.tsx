@@ -35,7 +35,7 @@ function App() {
             setIsLoading(true);
             try {
                 const result = await fetchBreakEven(debouncedInputs);
-                setBreakEven(result);
+                setBreakEven(result.breakEven);
             } catch (err) {
                 console.error(err);
             } finally {
