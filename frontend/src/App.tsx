@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { CalculationInputs } from "@shared/types";
 import { fetchBreakEven } from "./services/api";
 import { ROCKLAND_DEFAULTS } from "./config/defaults";
+import { useDebounce } from "./hooks/useDebounce";
 import {
     GlobalStyle,
     Container,
@@ -22,21 +23,28 @@ function App() {
     const [breakEven, setBreakEven] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    const debouncedInputs = useDebounce(inputs, 300);
+
     useEffect(() => {
-        if (inputs.itemCost === 0) {
+        if (!debouncedInputs.itemCost || debouncedInputs.itemCost <= 0) {
             setBreakEven(0);
             return;
         }
 
         const getCalculation = async () => {
             setIsLoading(true);
-            const result = await fetchBreakEven(inputs);
-            setBreakEven(result);
-            setIsLoading(false);
+            try {
+                const result = await fetchBreakEven(debouncedInputs);
+                setBreakEven(result);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
         };
 
         getCalculation();
-    }, [inputs]);
+    }, [debouncedInputs]);
 
     const handleUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
