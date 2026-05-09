@@ -16,30 +16,40 @@ import {
     HelpText,
     GhostButton,
     SectionLabel,
-    SrOnly, // Added for accessibility
+    SrOnly,
 } from "./styles/Library";
 import { calculateSourcingHealth, ProfitStatus } from "./utils/sourcing";
+import { colors } from "./styles/colors";
+
+type UIFormState = Record<keyof CalculationInputs, number | "">;
 
 function App() {
-    const [inputs, setInputs] = useState<CalculationInputs>(ROCKLAND_DEFAULTS);
+    // 1. Backend-Focused State (Strictly Numbers for the Break-Even API)
+    const [inputs, setInputs] = useState<UIFormState>(ROCKLAND_DEFAULTS);
+
+    // 2. UI-Focused State (Allows empty string for visual clearance)
+    const [marketPrice, setMarketPrice] = useState<number | "">("");
+
     const [breakEven, setBreakEven] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const debouncedInputs = useDebounce(inputs, 300);
 
     const analysis = useMemo(() => {
-        if (isLoading) {
+        if (isLoading || marketPrice === "") {
             return {
                 status: "neutral" as ProfitStatus,
                 profit: 0,
                 margin: 0,
-                label: "Calculating margin...",
+                label: isLoading
+                    ? "Calculating..."
+                    : "Enter market price to analyze",
             };
         }
+        return calculateSourcingHealth(marketPrice, breakEven);
+    }, [marketPrice, breakEven, isLoading]);
 
-        return calculateSourcingHealth(inputs.marketPrice, breakEven);
-    }, [inputs.marketPrice, breakEven, isLoading]);
-
+    // Fetch new break-even point when core sourcing variables change
     useEffect(() => {
         if (!debouncedInputs.itemCost || debouncedInputs.itemCost <= 0) {
             setBreakEven(0);
@@ -49,10 +59,20 @@ function App() {
         const getCalculation = async () => {
             setIsLoading(true);
             try {
-                const result = await fetchBreakEven(debouncedInputs);
+                // Construct a 100% TS-compliant, zero-safe payload
+                const safePayload: CalculationInputs = {
+                    itemCost: Number(debouncedInputs.itemCost) || 0,
+                    handlingFee: Number(debouncedInputs.handlingFee) || 0,
+                    fixedFee: Number(debouncedInputs.fixedFee) || 0,
+                    fvfRate: Number(debouncedInputs.fvfRate) || 0,
+                    adRate: Number(debouncedInputs.adRate) || 0,
+                    taxRate: Number(debouncedInputs.taxRate) || 0,
+                };
+
+                const result = await fetchBreakEven(safePayload);
                 setBreakEven(result.breakEven);
             } catch (err) {
-                console.error(err);
+                console.error("API Error:", err);
             } finally {
                 setIsLoading(false);
             }
@@ -61,18 +81,26 @@ function App() {
         getCalculation();
     }, [debouncedInputs]);
 
+    // Handler for the Sourcing backend data
     const handleUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setInputs((prev) => ({
             ...prev,
+            // Allow the empty string so the user can backspace!
             [name]: value === "" ? "" : parseFloat(value),
         }));
+    };
+
+    // Handler for the Analysis UI
+    const handlePriceUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        setMarketPrice(value === "" ? "" : parseFloat(value));
     };
 
     return (
         <>
             <GlobalStyle />
-            <Container as="main" style={{ opacity: isLoading ? 0.7 : 1 }}>
+            <Container style={{ opacity: isLoading ? 0.7 : 1 }}>
                 <header>
                     <Title>MarginLogic</Title>
                     <HelpText style={{ textAlign: "center" }}>
@@ -81,7 +109,6 @@ function App() {
                 </header>
 
                 <ResultCard
-                    as="section"
                     $status={analysis.status}
                     aria-live="polite"
                     aria-atomic="true"
@@ -141,17 +168,35 @@ function App() {
                     </div>
                 </ResultCard>
 
-                <InputGrid as="form">
+                <InputGrid onSubmit={(e) => e.preventDefault()}>
+                    <SectionLabel>Market Analysis</SectionLabel>
+                    <InputWrapper>
+                        <Label htmlFor="marketPrice">Avg. Sold Price ($)</Label>
+                        <Input
+                            id="marketPrice"
+                            name="marketPrice"
+                            type="number"
+                            step="0.01"
+                            value={marketPrice ?? ""}
+                            onChange={handlePriceUpdate}
+                            style={{
+                                borderColor:
+                                    marketPrice === ""
+                                        ? "inherit"
+                                        : colors.primary,
+                                backgroundColor:
+                                    marketPrice === ""
+                                        ? "inherit"
+                                        : colors.background,
+                            }}
+                        />
+                    </InputWrapper>
+
                     <SectionLabel>Sourcing Data</SectionLabel>
                     {[
                         {
                             label: "Item Cost ($)",
                             name: "itemCost",
-                            step: "0.01",
-                        },
-                        {
-                            label: "Avg. Sold Price ($)",
-                            name: "marketPrice",
                             step: "0.01",
                         },
                         {
@@ -218,7 +263,13 @@ function App() {
                     ))}
                 </InputGrid>
 
-                <GhostButton onClick={() => setInputs(ROCKLAND_DEFAULTS)}>
+                <GhostButton
+                    type="button"
+                    onClick={() => {
+                        setInputs(ROCKLAND_DEFAULTS);
+                        setMarketPrice("");
+                    }}
+                >
                     Reset All Fields
                 </GhostButton>
             </Container>

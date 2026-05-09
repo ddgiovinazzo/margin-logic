@@ -58,8 +58,7 @@ export const Label = styled.label`
     letter-spacing: 0.05em;
 `;
 
-/* RESTORED: Grid and Wrapper for form structure */
-export const InputGrid = styled.div`
+export const InputGrid = styled.form`
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.25rem;
