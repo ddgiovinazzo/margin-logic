@@ -12,6 +12,7 @@ export function useMarginCalculator() {
     const [marketPrice, setMarketPrice] = useState<number | "">("");
     const [breakEven, setBreakEven] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
     const debouncedInputs = useDebounce(inputs, 300);
 
@@ -37,6 +38,7 @@ export function useMarginCalculator() {
 
         const getCalculation = async () => {
             setIsLoading(true);
+            setError(null);
             try {
                 const safePayload: CalculationInputs = {
                     itemCost: Number(debouncedInputs.itemCost) || 0,
@@ -50,6 +52,9 @@ export function useMarginCalculator() {
                 setBreakEven(result.breakEven);
             } catch (err) {
                 console.error("API Error:", err);
+                setError(
+                    "Network error: Unable to calculate break-even. Please check your connection.",
+                );
             } finally {
                 setIsLoading(false);
             }
@@ -85,6 +90,7 @@ export function useMarginCalculator() {
         marketPrice,
         breakEven,
         isLoading,
+        error,
         analysis,
         handleUpdate,
         handleBlur,

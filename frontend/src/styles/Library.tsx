@@ -85,7 +85,8 @@ export const Input = styled.input.attrs({
         outline: none;
         border-color: ${colors.primary};
         background-color: ${colors.background};
-        box-shadow: 0 0 0 4px rgba(26, 26, 26, 0.05);
+        /* 0D appends ~5% opacity to the primary hex color */
+        box-shadow: 0 0 0 4px ${colors.primary}0D;
     }
 `;
 
@@ -165,8 +166,9 @@ export const AppHeader = styled.header`
 export const Divider = styled.div`
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    /* Using rgba instead of a solid color allows the line to naturally adapt 
+    /* 1A appends ~10% opacity to the primary hex color */
+    border-top: 1px solid ${colors.primary}1A;
+    /* Using hex opacity with the primary color allows the line to naturally adapt 
        to the different colored backgrounds of the ResultCard */
 `;
 
@@ -185,4 +187,20 @@ export const StatusLabel = styled.p`
     font-weight: 600;
     font-size: 0.95rem;
     color: inherit; /* Inherits the specific text color of the current ResultCard status */
+`;
+
+export const ErrorBanner = styled.div`
+    background-color: ${colors.dangerBg};
+    color: ${colors.critical};
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: center;
+    border: 1px solid ${colors.danger};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 `;

@@ -7,6 +7,7 @@ import {
     MetricsRow,
     MetricValue,
     StatusLabel,
+    ErrorBanner,
 } from "../styles/Library";
 import { ProfitStatus } from "../utils/sourcing";
 
@@ -17,6 +18,7 @@ interface ResultDisplayProps {
     profit: number;
     margin: number;
     label: string;
+    error: string | null;
 }
 
 export function ResultDisplay({
@@ -26,13 +28,20 @@ export function ResultDisplay({
     profit,
     margin,
     label,
+    error,
 }: ResultDisplayProps) {
     return (
         <ResultCard $status={status} aria-live="polite" aria-atomic="true">
+            {error && (
+                <ErrorBanner>
+                    <span aria-hidden="true">⚠️</span> {error}
+                </ErrorBanner>
+            )}
+
             <Label as="h2">Break-Even Price</Label>
             <PriceDisplay>
                 <SrOnly>The break-even price is </SrOnly>
-                {isLoading ? "..." : `$${breakEven.toFixed(2)}`}
+                {isLoading && !error ? "..." : `$${breakEven.toFixed(2)}`}
             </PriceDisplay>
 
             <Divider>

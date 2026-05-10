@@ -20,8 +20,8 @@ function App() {
         handleBlur,
         handlePriceUpdate,
         resetForm,
+        error,
     } = useMarginCalculator();
-
     return (
         <>
             <GlobalStyle />
@@ -38,6 +38,7 @@ function App() {
                     profit={analysis.profit}
                     margin={analysis.margin}
                     label={analysis.label}
+                    error={error}
                 />
 
                 <SourcingForm
