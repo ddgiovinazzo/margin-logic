@@ -135,6 +135,29 @@ export const GhostButton = styled.button`
     }
 `;
 
+export const PrimaryButton = styled.button`
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    background-color: ${colors.primary};
+    color: ${colors.background};
+    font-size: 1.1rem;
+    font-weight: 800;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:active {
+        opacity: 0.8;
+    }
+
+    &:disabled {
+        background-color: ${colors.border};
+        cursor: not-allowed;
+    }
+`;
+
 export const SectionLabel = styled.h2`
     font-size: 0.65rem;
     font-weight: 800;

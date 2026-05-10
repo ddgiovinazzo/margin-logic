@@ -17,7 +17,7 @@ function App() {
         isLoading,
         analysis,
         handleUpdate,
-        handleBlur,
+        handleCalculate,
         handlePriceUpdate,
         resetForm,
         error,
@@ -44,9 +44,10 @@ function App() {
                 <SourcingForm
                     inputs={inputs}
                     marketPrice={marketPrice}
+                    isLoading={isLoading}
                     onUpdate={handleUpdate}
-                    onBlur={handleBlur}
                     onPriceUpdate={handlePriceUpdate}
+                    onCalculate={handleCalculate}
                     onReset={resetForm}
                 />
             </Container>
