@@ -156,3 +156,33 @@ export const SrOnly = styled.span`
     white-space: nowrap;
     border-width: 0;
 `;
+
+export const AppHeader = styled.header`
+    margin-bottom: 1.5rem;
+    text-align: center;
+`;
+
+export const Divider = styled.div`
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    /* Using rgba instead of a solid color allows the line to naturally adapt 
+       to the different colored backgrounds of the ResultCard */
+`;
+
+export const MetricsRow = styled.div`
+    display: flex;
+    justify-content: space-around;
+`;
+
+export const MetricValue = styled.div`
+    font-size: 1.4rem;
+    font-weight: 900;
+`;
+
+export const StatusLabel = styled.p`
+    margin-top: 0.75rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: inherit; /* Inherits the specific text color of the current ResultCard status */
+`;
