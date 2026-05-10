@@ -14,10 +14,11 @@ export function useMarginCalculator() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const debouncedInputs = useDebounce(inputs, 300);
+    const debouncedInputs = useDebounce(inputs, 1000);
+    const debouncedMarketPrice = useDebounce(marketPrice, 1000);
 
     const analysis = useMemo(() => {
-        if (isLoading || marketPrice === "") {
+        if (isLoading || debouncedMarketPrice === "") {
             return {
                 status: "neutral" as ProfitStatus,
                 profit: 0,
@@ -27,8 +28,8 @@ export function useMarginCalculator() {
                     : "Enter market price to analyze",
             };
         }
-        return calculateSourcingHealth(marketPrice, breakEven);
-    }, [marketPrice, breakEven, isLoading]);
+        return calculateSourcingHealth(debouncedMarketPrice, breakEven);
+    }, [debouncedMarketPrice, breakEven, isLoading]);
 
     useEffect(() => {
         if (!debouncedInputs.itemCost || debouncedInputs.itemCost <= 0) {
