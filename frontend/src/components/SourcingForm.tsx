@@ -38,8 +38,8 @@ export function SourcingForm({
                         name="marketPrice"
                         type="number"
                         step="0.01"
-                        value={marketPrice || ""}
-                        placeholder="0"
+                        value={marketPrice}
+                        placeholder="-"
                         onChange={onPriceUpdate}
                         style={{
                             borderColor:
