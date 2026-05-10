@@ -38,7 +38,8 @@ export function SourcingForm({
                         name="marketPrice"
                         type="number"
                         step="0.01"
-                        value={marketPrice ?? ""}
+                        value={marketPrice || ""}
+                        placeholder="0"
                         onChange={onPriceUpdate}
                         style={{
                             borderColor:
@@ -69,9 +70,10 @@ export function SourcingForm({
                             type="number"
                             step={field.step}
                             value={
-                                inputs[field.name as keyof CalculationInputs] ??
+                                inputs[field.name as keyof CalculationInputs] ||
                                 ""
                             }
+                            placeholder="0"
                             onChange={onUpdate}
                             onBlur={onBlur}
                         />
@@ -92,9 +94,10 @@ export function SourcingForm({
                             type="number"
                             step={field.step}
                             value={
-                                inputs[field.name as keyof CalculationInputs] ??
+                                inputs[field.name as keyof CalculationInputs] ||
                                 ""
                             }
+                            placeholder="0"
                             onChange={onUpdate}
                             onBlur={onBlur}
                         />
