@@ -1,107 +1,120 @@
 import { useState, useRef } from "react";
 import type { CalculationInputs } from "@shared/types";
 import { fetchBreakEven } from "../services/api";
-import { ROCKLAND_DEFAULTS } from "../config/defaults";
 import { calculateSourcingHealth, ProfitStatus } from "../utils/sourcing";
+import { useLocalStorage } from "./useLocalStorage";
 
-export type UIFormState = Record<keyof CalculationInputs, number | "">;
+interface AnalysisState {
+    status: ProfitStatus;
+    profit: number | "-";
+    margin: number | "-";
+    label: string;
+}
+
+export interface PlatformSettings {
+    taxRate: number | "";
+    fvfRate: number | "";
+    adRate: number | "";
+    fixedFee: number | "";
+}
+
+export interface SourcingData {
+    itemCost: number | "";
+    handlingFee: number | "";
+}
+
+const DEFAULT_SETTINGS: PlatformSettings = {
+    taxRate: 8.375,
+    fvfRate: 13.25,
+    adRate: 2.0,
+    fixedFee: 0.3,
+};
 
 export function useMarginCalculator() {
-    const [inputs, setInputs] = useState<UIFormState>(ROCKLAND_DEFAULTS);
+    const [settings, setSettings] = useLocalStorage<PlatformSettings>(
+        "marginlogic_settings",
+        DEFAULT_SETTINGS,
+    );
+
+    const [sourcing, setSourcing] = useState<SourcingData>({
+        itemCost: "",
+        handlingFee: "",
+    });
     const [marketPrice, setMarketPrice] = useState<number | "">("");
 
     const [breakEven, setBreakEven] = useState<number>(0);
-    const [analysis, setAnalysis] = useState({
-        status: "neutral" as ProfitStatus,
-        profit: 0,
-        margin: 0,
-        label: "Enter data and press Calculate",
-    });
-
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+
+    const [analysis, setAnalysis] = useState<AnalysisState>({
+        status: "neutral" as ProfitStatus,
+        profit: "-",
+        margin: "-",
+        label: "Enter data and press Calculate",
+    });
 
     const lastApiPayload = useRef<string | null>(null);
 
     const handleCalculate = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
+        setError(null);
 
-        // Basic validation
-        if (!inputs.itemCost || inputs.itemCost <= 0) {
-            setBreakEven(0);
-            setAnalysis({
-                status: "neutral",
-                profit: 0,
-                margin: 0,
-                label: "Item cost required",
-            });
+        if (!sourcing.itemCost || sourcing.itemCost <= 0) {
+            setError("Please enter an Item Cost to continue.");
             return;
         }
 
         const safePayload: CalculationInputs = {
-            itemCost: Number(inputs.itemCost) || 0,
-            handlingFee: Number(inputs.handlingFee) || 0,
-            fixedFee: Number(inputs.fixedFee) || 0,
-            fvfRate: Number(inputs.fvfRate) || 0,
-            adRate: Number(inputs.adRate) || 0,
-            taxRate: Number(inputs.taxRate) || 0,
+            itemCost: Number(sourcing.itemCost) || 0,
+            handlingFee: Number(sourcing.handlingFee) || 0,
+            fixedFee: Number(settings.fixedFee) || 0,
+            fvfRate: Number(settings.fvfRate) || 0,
+            adRate: Number(settings.adRate) || 0,
+            taxRate: Number(settings.taxRate) || 0,
         };
 
-        // Convert the payload to a string so we can easily compare it to our cache
         const payloadKey = JSON.stringify(safePayload);
 
-        // 1. Did the sourcing variables actually change?
         if (payloadKey !== lastApiPayload.current) {
             setIsLoading(true);
-            setError(null);
 
             try {
                 const result = await fetchBreakEven(safePayload);
                 setBreakEven(result.breakEven);
-
-                // Save this successful string to the cache!
                 lastApiPayload.current = payloadKey;
 
-                if (marketPrice === "") {
-                    setAnalysis({
-                        status: "neutral",
-                        profit: 0,
-                        margin: 0,
-                        label: "Enter market price to analyze",
-                    });
-                } else {
-                    setAnalysis(
-                        calculateSourcingHealth(marketPrice, result.breakEven),
-                    );
-                }
+                // ✨ FIX 2: Use the raw marketPrice for the dash logic
+                setAnalysis(
+                    calculateSourcingHealth(marketPrice, result.breakEven),
+                );
+                setIsModalOpen(true);
             } catch (err) {
                 console.error("API Error:", err);
                 setError(
-                    "Network error: Unable to calculate break-even. Please check your connection.",
+                    "Connection error. Please check your signal and try again.",
                 );
             } finally {
                 setIsLoading(false);
             }
         } else {
-            // 2. THE CACHE HIT!
-            // The sourcing variables are identical. Only the marketPrice changed.
-            // Skip the API completely and just run the local math!
-            if (marketPrice === "") {
-                setAnalysis({
-                    status: "neutral",
-                    profit: 0,
-                    margin: 0,
-                    label: "Enter market price to analyze",
-                });
-            } else {
-                setAnalysis(calculateSourcingHealth(marketPrice, breakEven));
-            }
+            // ✨ FIX 3: Use 'breakEven' state here, because 'result' is not in scope
+            setAnalysis(calculateSourcingHealth(marketPrice, breakEven));
+            setIsModalOpen(true);
         }
     };
 
-    const handleUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSourcingUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setInputs((prev) => ({
+        setSourcing((prev) => ({
+            ...prev,
+            [name]: value === "" ? "" : parseFloat(value),
+        }));
+    };
+
+    const handleSettingsUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSettings((prev) => ({
             ...prev,
             [name]: value === "" ? "" : parseFloat(value),
         }));
@@ -111,31 +124,38 @@ export function useMarginCalculator() {
         setMarketPrice(e.target.value === "" ? "" : parseFloat(e.target.value));
     };
 
+    const closeModal = () => setIsModalOpen(false);
+
     const resetForm = () => {
-        setInputs(ROCKLAND_DEFAULTS);
+        setSourcing({ itemCost: "", handlingFee: "" });
         setMarketPrice("");
         setBreakEven(0);
+        // ✨ FIX 4: Update reset values to match the new string-friendly state
         setAnalysis({
             status: "neutral",
-            profit: 0,
-            margin: 0,
+            profit: "-",
+            margin: "-",
             label: "Enter data and press Calculate",
         });
         setError(null);
-        // ✨ Clear the cache when resetting the form
         lastApiPayload.current = null;
+        setIsModalOpen(false);
     };
 
     return {
-        inputs,
+        sourcing,
+        settings,
         marketPrice,
         breakEven,
         isLoading,
         error,
         analysis,
-        handleUpdate,
+        isModalOpen,
+        handleSourcingUpdate,
+        handleSettingsUpdate,
         handlePriceUpdate,
         handleCalculate,
+        closeModal,
         resetForm,
     };
 }

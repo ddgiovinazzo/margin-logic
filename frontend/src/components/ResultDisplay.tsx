@@ -2,57 +2,53 @@ import {
     ResultCard,
     Label,
     PriceDisplay,
-    SrOnly,
     Divider,
     MetricsRow,
     MetricValue,
     StatusLabel,
-    ErrorBanner,
+    ResultHeading,
 } from "../styles/Library";
 import { ProfitStatus } from "../utils/sourcing";
 
 interface ResultDisplayProps {
     status: ProfitStatus;
-    isLoading: boolean;
     breakEven: number;
-    profit: number;
-    margin: number;
+    profit: number | "-";
+    margin: number | "-";
     label: string;
-    error: string | null;
 }
 
 export function ResultDisplay({
     status,
-    isLoading,
     breakEven,
     profit,
     margin,
     label,
-    error,
 }: ResultDisplayProps) {
     return (
-        <ResultCard $status={status} aria-live="polite" aria-atomic="true">
-            {error && (
-                <ErrorBanner>
-                    <span aria-hidden="true">⚠️</span> {error}
-                </ErrorBanner>
-            )}
-
-            <Label as="h2">Break-Even Price</Label>
-            <PriceDisplay>
-                <SrOnly>The break-even price is </SrOnly>
-                {isLoading && !error ? "..." : `$${breakEven.toFixed(2)}`}
-            </PriceDisplay>
+        <ResultCard $status={status} aria-live="polite">
+            <ResultHeading>Break-Even Price</ResultHeading>
+            <PriceDisplay>${breakEven.toFixed(2)}</PriceDisplay>
 
             <Divider>
                 <MetricsRow>
                     <div>
                         <Label>Est. Profit</Label>
-                        <MetricValue>${profit.toFixed(2)}</MetricValue>
+                        {/* ✨ Added $status here to color the number */}
+                        <MetricValue $status={status}>
+                            {typeof profit === "number"
+                                ? `$${profit.toFixed(2)}`
+                                : profit}
+                        </MetricValue>
                     </div>
                     <div>
                         <Label>Margin</Label>
-                        <MetricValue>{margin.toFixed(1)}%</MetricValue>
+                        {/* ✨ Added $status here to color the number */}
+                        <MetricValue $status={status}>
+                            {typeof margin === "number"
+                                ? `${margin.toFixed(1)}%`
+                                : margin}
+                        </MetricValue>
                     </div>
                 </MetricsRow>
                 <StatusLabel>{label}</StatusLabel>

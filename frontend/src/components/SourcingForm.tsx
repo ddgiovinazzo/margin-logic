@@ -1,112 +1,125 @@
-import type { CalculationInputs } from "@shared/types";
-import { UIFormState } from "../hooks/useMarginCalculator";
 import {
     InputGrid,
+    InputRow,
     SectionLabel,
     InputWrapper,
     Label,
     Input,
-    GhostButton,
     PrimaryButton,
 } from "../styles/Library";
 import { colors } from "../styles/colors";
+import type {
+    SourcingData,
+    PlatformSettings,
+} from "../hooks/useMarginCalculator";
 
 interface SourcingFormProps {
-    inputs: UIFormState;
+    sourcing: SourcingData;
+    settings: PlatformSettings;
     marketPrice: number | "";
     isLoading: boolean;
-    onUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onSourcingUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onSettingsUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onPriceUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onCalculate: (e: React.FormEvent) => void;
     onReset: () => void;
 }
 
 export function SourcingForm({
-    inputs,
+    sourcing,
+    settings,
     marketPrice,
     isLoading,
-    onUpdate,
+    onSourcingUpdate,
+    onSettingsUpdate,
     onPriceUpdate,
     onCalculate,
-    onReset,
 }: SourcingFormProps) {
     return (
         <InputGrid onSubmit={onCalculate}>
-            <SectionLabel>Market Analysis</SectionLabel>
-            <InputWrapper>
-                <Label htmlFor="marketPrice">Avg. Sold Price ($)</Label>
-                <Input
-                    id="marketPrice"
-                    name="marketPrice"
-                    type="number"
-                    step="0.01"
-                    value={marketPrice}
-                    placeholder="-"
-                    onChange={onPriceUpdate}
-                    style={{
-                        borderColor:
-                            marketPrice === "" ? "inherit" : colors.primary,
-                        backgroundColor:
-                            marketPrice === "" ? "inherit" : colors.background,
-                    }}
-                />
-            </InputWrapper>
-
-            <SectionLabel>Sourcing Data</SectionLabel>
-            {[
-                { label: "Item Cost ($)", name: "itemCost", step: "0.01" },
-                {
-                    label: "Handling/Shipping ($)",
-                    name: "handlingFee",
-                    step: "0.01",
-                },
-                { label: "Sales Tax (%)", name: "taxRate", step: "0.1" },
-            ].map((field) => (
-                <InputWrapper key={field.name}>
-                    <Label htmlFor={field.name}>{field.label}</Label>
+            <SectionLabel>Item & Market</SectionLabel>
+            <InputRow>
+                <InputWrapper>
+                    <Label htmlFor="itemCost">Cost ($)</Label>
                     <Input
-                        id={field.name}
-                        name={field.name}
+                        id="itemCost"
+                        name="itemCost"
                         type="number"
-                        step={field.step}
-                        value={
-                            inputs[field.name as keyof CalculationInputs] || ""
-                        }
-                        placeholder="0"
-                        onChange={onUpdate}
+                        value={sourcing.itemCost}
+                        onChange={onSourcingUpdate}
+                        placeholder="0.00"
                     />
                 </InputWrapper>
-            ))}
+                <InputWrapper>
+                    <Label htmlFor="marketPrice">Avg Sold ($)</Label>
+                    <Input
+                        id="marketPrice"
+                        name="marketPrice"
+                        type="number"
+                        value={marketPrice}
+                        onChange={onPriceUpdate}
+                        placeholder="Optional"
+                        style={{
+                            border: marketPrice
+                                ? `2px solid ${colors.primary}`
+                                : "",
+                        }}
+                    />
+                </InputWrapper>
+            </InputRow>
+
+            <SectionLabel>Logistics & Taxes</SectionLabel>
+            <InputRow>
+                <InputWrapper>
+                    <Label htmlFor="handlingFee">Shipping ($)</Label>
+                    <Input
+                        id="handlingFee"
+                        name="handlingFee"
+                        type="number"
+                        value={sourcing.handlingFee}
+                        onChange={onSourcingUpdate}
+                        placeholder="0"
+                    />
+                </InputWrapper>
+                <InputWrapper>
+                    <Label htmlFor="taxRate">Tax (%)</Label>
+                    <Input
+                        id="taxRate"
+                        name="taxRate"
+                        type="number"
+                        value={settings.taxRate}
+                        onChange={onSettingsUpdate}
+                    />
+                </InputWrapper>
+            </InputRow>
 
             <SectionLabel>Platform Fees</SectionLabel>
-            {[
-                { label: "eBay Ad Rate (%)", name: "adRate", step: "0.1" },
-                { label: "eBay FVF (%)", name: "fvfRate", step: "0.01" },
-                { label: "Fixed Fee ($)", name: "fixedFee", step: "0.01" },
-            ].map((field) => (
-                <InputWrapper key={field.name}>
-                    <Label htmlFor={field.name}>{field.label}</Label>
+            <InputRow>
+                <InputWrapper>
+                    <Label htmlFor="fvfRate">FVF (%)</Label>
                     <Input
-                        id={field.name}
-                        name={field.name}
+                        id="fvfRate"
+                        name="fvfRate"
                         type="number"
-                        step={field.step}
-                        value={
-                            inputs[field.name as keyof CalculationInputs] || ""
-                        }
-                        placeholder="0"
-                        onChange={onUpdate}
+                        value={settings.fvfRate}
+                        onChange={onSettingsUpdate}
                     />
                 </InputWrapper>
-            ))}
+                <InputWrapper>
+                    <Label htmlFor="adRate">Ads (%)</Label>
+                    <Input
+                        id="adRate"
+                        name="adRate"
+                        type="number"
+                        value={settings.adRate}
+                        onChange={onSettingsUpdate}
+                    />
+                </InputWrapper>
+            </InputRow>
 
             <PrimaryButton type="submit" disabled={isLoading}>
-                {isLoading ? "Calculating..." : "Calculate Margin"}
+                {isLoading ? "CALCULATING..." : "CALCULATE MARGIN"}
             </PrimaryButton>
-
-            <GhostButton type="button" onClick={onReset}>
-                Reset All Fields
-            </GhostButton>
         </InputGrid>
     );
 }

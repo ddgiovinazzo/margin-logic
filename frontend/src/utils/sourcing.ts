@@ -1,44 +1,46 @@
 export type ProfitStatus =
-    | "success"
+    | "positive"
     | "warning"
-    | "danger"
     | "critical"
-    | "neutral";
+    | "neutral"
+    | "pending";
 
-interface SourcingAnalysis {
+export interface SourcingHealth {
     status: ProfitStatus;
-    profit: number;
-    margin: number;
+    profit: number | "-";
+    margin: number | "-";
     label: string;
 }
 
 export const calculateSourcingHealth = (
-    marketPrice: number,
+    marketPrice: number | "",
     breakEven: number,
-): SourcingAnalysis => {
-    if (breakEven <= 0) {
+): SourcingHealth => {
+    // ✨ Handle the "Dash" state
+    if (marketPrice === "" || marketPrice === 0) {
         return {
-            status: "neutral",
-            profit: 0,
-            margin: 0,
-            label: "Awaiting calculation...",
+            status: "pending",
+            profit: "-",
+            margin: "-",
+            label: "Enter Average Sold Price to see profit projections",
         };
     }
 
     const profit = marketPrice - breakEven;
-    const margin = marketPrice > 0 ? (profit / marketPrice) * 100 : -100;
+    const margin = (profit / marketPrice) * 100;
 
-    if (margin >= 30)
-        return { status: "success", profit, margin, label: "✅ High Margin" };
-    if (margin >= 15)
-        return { status: "warning", profit, margin, label: "⚖️ Fair Margin" };
-    if (margin >= 5)
-        return { status: "danger", profit, margin, label: "⚠️ Thin Margin" };
-
-    return {
-        status: "critical",
-        profit,
-        margin,
-        label: "🚫 Potential Loss",
-    };
+    if (margin > 20) {
+        return { status: "positive", profit, margin, label: "Strong Margin" };
+    } else if (margin > 10) {
+        return { status: "warning", profit, margin, label: "Thin Margin" };
+    } else if (margin > 0) {
+        return {
+            status: "critical",
+            profit,
+            margin,
+            label: "High Risk / Break-even",
+        };
+    } else {
+        return { status: "critical", profit, margin, label: "Potential Loss" };
+    }
 };

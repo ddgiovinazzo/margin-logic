@@ -3,7 +3,10 @@ import {
     Container,
     AppHeader,
     Title,
-    HelpText,
+    ErrorBanner,
+    ModalOverlay,
+    PrimaryButton,
+    GhostButton,
 } from "./styles/Library";
 import { useMarginCalculator } from "./hooks/useMarginCalculator";
 import { ResultDisplay } from "./components/ResultDisplay";
@@ -11,45 +14,70 @@ import { SourcingForm } from "./components/SourcingForm";
 
 function App() {
     const {
-        inputs,
+        sourcing,
+        settings,
         marketPrice,
         breakEven,
         isLoading,
         analysis,
-        handleUpdate,
+        isModalOpen,
+        closeModal,
+        handleSourcingUpdate,
+        handleSettingsUpdate,
         handleCalculate,
         handlePriceUpdate,
         resetForm,
         error,
     } = useMarginCalculator();
+
     return (
         <>
             <GlobalStyle />
-            <Container style={{ opacity: isLoading ? 0.7 : 1 }}>
+            <Container>
                 <AppHeader>
                     <Title>MarginLogic</Title>
-                    <HelpText>Live Sourcing Analysis</HelpText>
+                    <GhostButton
+                        onClick={resetForm}
+                        style={{ width: "auto", padding: "0.5rem" }}
+                    >
+                        Reset
+                    </GhostButton>
                 </AppHeader>
 
-                <ResultDisplay
-                    status={analysis.status}
-                    isLoading={isLoading}
-                    breakEven={breakEven}
-                    profit={analysis.profit}
-                    margin={analysis.margin}
-                    label={analysis.label}
-                    error={error}
-                />
+                {error && <ErrorBanner>{error}</ErrorBanner>}
 
+                {/* 🛠️ Explicitly pass the variables here */}
                 <SourcingForm
-                    inputs={inputs}
+                    sourcing={sourcing}
+                    settings={settings}
                     marketPrice={marketPrice}
                     isLoading={isLoading}
-                    onUpdate={handleUpdate}
+                    onSourcingUpdate={handleSourcingUpdate}
+                    onSettingsUpdate={handleSettingsUpdate}
                     onPriceUpdate={handlePriceUpdate}
                     onCalculate={handleCalculate}
                     onReset={resetForm}
                 />
+
+                {isModalOpen && (
+                    <ModalOverlay onClick={closeModal}>
+                        <div onClick={(e) => e.stopPropagation()}>
+                            <ResultDisplay
+                                status={analysis.status}
+                                breakEven={breakEven}
+                                profit={analysis.profit}
+                                margin={analysis.margin}
+                                label={analysis.label}
+                            />
+                            <PrimaryButton
+                                onClick={closeModal}
+                                style={{ marginTop: "1rem" }}
+                            >
+                                Scan Next Item
+                            </PrimaryButton>
+                        </div>
+                    </ModalOverlay>
+                )}
             </Container>
         </>
     );
