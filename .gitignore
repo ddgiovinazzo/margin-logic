@@ -25,3 +25,7 @@ yarn-error.log*
 .idea/
 *.swp
 *.swo
+
+knip.json
+changes.txt
+tree.txt

@@ -7,68 +7,42 @@ import {
     Input,
     PrimaryButton,
 } from "../styles/Library";
-import { colors } from "../styles/colors";
-import type {
-    SourcingData,
-    PlatformSettings,
-} from "../hooks/useMarginCalculator";
+import type { PlatformSettings } from "../hooks/useMarginCalculator";
 
 interface SourcingFormProps {
-    sourcing: SourcingData;
     settings: PlatformSettings;
     marketPrice: number | "";
     isLoading: boolean;
-    onSourcingUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onSettingsUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onPriceUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onCalculate: (e: React.FormEvent) => void;
-    onReset: () => void;
 }
 
 export function SourcingForm({
-    sourcing,
     settings,
     marketPrice,
     isLoading,
-    onSourcingUpdate,
     onSettingsUpdate,
     onPriceUpdate,
     onCalculate,
 }: SourcingFormProps) {
     return (
         <InputGrid onSubmit={onCalculate}>
-            <SectionLabel>Item & Market</SectionLabel>
-            <InputRow>
-                <InputWrapper>
-                    <Label htmlFor="itemCost">Cost ($)</Label>
-                    <Input
-                        id="itemCost"
-                        name="itemCost"
-                        type="number"
-                        value={sourcing.itemCost}
-                        onChange={onSourcingUpdate}
-                        placeholder="0.00"
-                    />
-                </InputWrapper>
-                <InputWrapper>
-                    <Label htmlFor="marketPrice">Avg Sold ($)</Label>
-                    <Input
-                        id="marketPrice"
-                        name="marketPrice"
-                        type="number"
-                        value={marketPrice}
-                        onChange={onPriceUpdate}
-                        placeholder="Optional"
-                        style={{
-                            border: marketPrice
-                                ? `2px solid ${colors.primary}`
-                                : "",
-                        }}
-                    />
-                </InputWrapper>
-            </InputRow>
+            <SectionLabel>Market Target</SectionLabel>
+            <InputWrapper>
+                <Label htmlFor="marketPrice">Average Sold Price ($)</Label>
+                <Input
+                    id="marketPrice"
+                    name="marketPrice"
+                    type="number"
+                    value={marketPrice}
+                    onChange={onPriceUpdate}
+                    placeholder="e.g. 50.00"
+                    required
+                />
+            </InputWrapper>
 
-            <SectionLabel>Logistics & Taxes</SectionLabel>
+            <SectionLabel>Logistics & Tax (Persistent)</SectionLabel>
             <InputRow>
                 <InputWrapper>
                     <Label htmlFor="handlingFee">Shipping ($)</Label>
@@ -76,9 +50,8 @@ export function SourcingForm({
                         id="handlingFee"
                         name="handlingFee"
                         type="number"
-                        value={sourcing.handlingFee}
-                        onChange={onSourcingUpdate}
-                        placeholder="0"
+                        value={settings.handlingFee}
+                        onChange={onSettingsUpdate}
                     />
                 </InputWrapper>
                 <InputWrapper>
@@ -96,7 +69,7 @@ export function SourcingForm({
             <SectionLabel>Platform Fees</SectionLabel>
             <InputRow>
                 <InputWrapper>
-                    <Label htmlFor="fvfRate">FVF (%)</Label>
+                    <Label htmlFor="fvfRate">FVF %</Label>
                     <Input
                         id="fvfRate"
                         name="fvfRate"
@@ -106,7 +79,7 @@ export function SourcingForm({
                     />
                 </InputWrapper>
                 <InputWrapper>
-                    <Label htmlFor="adRate">Ads (%)</Label>
+                    <Label htmlFor="adRate">Ads %</Label>
                     <Input
                         id="adRate"
                         name="adRate"
@@ -118,7 +91,7 @@ export function SourcingForm({
             </InputRow>
 
             <PrimaryButton type="submit" disabled={isLoading}>
-                {isLoading ? "CALCULATING..." : "CALCULATE MARGIN"}
+                {isLoading ? "CALCULATING..." : "FIND MAX BUY PRICE"}
             </PrimaryButton>
         </InputGrid>
     );
