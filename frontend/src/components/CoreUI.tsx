@@ -24,8 +24,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   html, body {
-    height: 100%;
-    height: -webkit-fill-available;
+    min-height: 100%;
   }
 
   body {
@@ -47,13 +46,12 @@ export const Container = styled.main`
     max-width: 500px;
     margin: 0 auto;
 
-    height: 100vh;
-    height: 100dvh;
-    height: -webkit-fill-available;
+    min-height: 100vh;
+    min-height: 100dvh;
 
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-x: hidden;
 `;
 
 export const AppHeader = styled.header`
