@@ -1,72 +1,65 @@
-# MarginLogic
+# MarginLogic 📈
 
-**MarginLogic** is a mobile-first, professional-grade sourcing tool designed for eBay resellers. It reverses the standard profit calculation to determine the **maximum purchase price** in real-time, enabling faster decision-making in the field.
+MarginLogic is a mobile-first, reverse-profitability engine designed for eBay resellers. 
 
----
+Built specifically for high-glare, fast-paced field environments (like estate sales and thrift stores), this tool eliminates mental math. Instead of guessing if an item is worth buying, MarginLogic works backward from a target sale price to give you the exact **Maximum Cost of Goods Sold (COGS)** you can pay while guaranteeing your desired profit margin.
 
-## 🚀 The Sourcing Protocol
-Unlike generic calculators, MarginLogic implements a **"Ceiling-First" workflow**:
-* **Instant Decision Engine:** Calculations are performed locally for zero-latency feedback during sourcing.
-* **The "Price Ladder":** Displays a descending hierarchy of maximum buy prices for specific margin targets (Excellent 30% down to Break-Even 0%).
-* **Touch-Target Optimization:** 1rem (16px) minimum padding for field-ready use on mobile devices.
-* **Precision Math:** Solves for Item Cost ($C$) based on target Market Price ($P$):
+## ✨ Features
 
-$$ C = P(1 - \text{FeeLoad}) - H - \text{Fixed Fee} - \text{Target Profit} $$
+* **Reverse Margin Ladder:** Instantly calculates your maximum buy price across four tiers: Excellent (30%), Healthy (20%), Standard (10%), and Break-Even (0%).
+* **Loss Prevention:** Automatically detects unprofitable items where fees and shipping outweigh revenue, displaying a high-contrast "DO NOT BUY" hero alert.
+* **USPS Commercial Pricing Integration:** Pre-loaded with accurate May 2026 USPS Commercial rates (e.g., Padded Envelope $11.99, Medium Box $21.17) to reflect actual platform logistics costs.
+* **"Tax on Tax" Accuracy:** Accurately calculates eBay Final Value Fees based on the total transaction amount, including the buyer's localized sales tax.
+* **Field-Ready UI:** Achieves a **100/100 Lighthouse Score** across Performance, Accessibility, Best Practices, and SEO. Uses a custom "Deep Charcoal" palette strictly adhering to WCAG AA contrast standards (> 4.5:1) for maximum readability in direct sunlight.
+* **Persistent Settings:** Uses `localStorage` to save your baseline tax rates, ad rates, and fee structures so the app is instantly ready the moment it's opened.
 
----
+## 🧮 The Math Engine
 
-## 🛠 Technical Stack
-* **Core:** React 19 + TypeScript 5
-* **State Management:** Custom Hooks with Persistent LocalStorage for platform settings.
-* **Styling:** `styled-components` (Custom Atomic Library with ARIA-friendly themes).
-* **Tooling:** Vite, ESLint `@stylistic`, and **Knip** for dead-code elimination.
+MarginLogic doesn't just subtract standard fees; it acts as a reverse-profitability calculator. Because certain costs (like eBay Final Value Fees) scale with the final sale price, while other costs (like risk buffers) scale with your initial buy price, calculating the exact COGS limit requires algebraic isolation.
 
----
+### The Handling Formula
+To ensure profitability across both low-tier and high-tier items, the app applies a dynamic handling buffer rather than a static cost:
+* **Baseline:** $1.50 (covers standard tape, boxes, and thermal labels).
+* **Risk Scale:** 1% of the item's purchase cost (covers increased void fill, heavy-duty boxes, and insurance on expensive items).
 
-## 📐 Engineering Standards
-This project adheres to a **Zero-Footprint Minimalist Plan**:
-1. **Strict Linting:** Root-level ESLint "Source of Truth" using 4-space indentation and 100% type safety.
-2. **Performance First:** Eliminated unnecessary network overhead by moving the mathematical engine to the client-side.
-3. **Defensive Programming:** 
-   - Transient props (`$`) to prevent DOM prop-bleeding in styled-components.
-   - Clean architecture: Decoupled business logic (hooks) from the presentation layer.
+### Algebraic Isolation
+To find the absolute maximum you can pay for an item ($C$) while guaranteeing a specific target profit margin, the app reverses the traditional margin formula using the following logic:
 
----
+$$C = \frac{P \times (1 - \text{FeeLoad}) - S - 1.50 - \text{FF} - \text{TargetProfit}}{1.01}$$
 
-## 🏗 Project Structure
-```bash
-├── frontend/           # Vite + React Application
-│   └── src/
-│       ├── hooks/      # Math Engine & LocalStorage Sync
-│       ├── components/ # Atomic UI (SourcingForm, ResultDisplay)
-│       └── styles/     # Theme-aware Atomic Library
-├── shared/             # Unified Type Definitions
-└── knip.json           # Project Integrity & Dead-Code Configuration
-```
+**Where:**
+* $P$ = Target Sale Price (Market Value)
+* $\text{FeeLoad}$ = eBay FVF + Ad Rate + "Tax on Tax" Overhead
+* $S$ = USPS Commercial Shipping Rate
+* $\text{FF}$ = eBay Fixed Transaction Fee ($0.30)
+* $1.01$ = The divisor that isolates the 1% dynamic risk scale.
 
----
+## 🛠 Tech Stack
 
-## 🎤 Interview Talking Points (Development Logs)
+* **Core:** React, TypeScript, Vite
+* **Styling:** Styled-Components (Custom Mobile-First Component Library)
+* **State Management:** React Hooks (`useState`, custom `useLocalStorage`)
 
-### 1. The Architectural Pivot (Latency vs. Cloud)
-**Problem:** Initial versions used AWS Lambda for calculations, but network latency and "Cold Starts" hindered the real-time sourcing experience in low-signal areas.
-**Solution:** Migrated the mathematical logic to a client-side engine.
-**Talking Point:** "I pivoted the architecture to favor UX over a backend-heavy approach. By moving the math engine to the client, I achieved sub-millisecond response times and made the tool resilient to poor network conditions, while simultaneously reducing AWS operational costs to zero."
+## 🚀 Getting Started
 
-### 2. The "Better is Lower" UI Logic
-**Problem:** Standard calculators show profit as an increasing value, which doesn't match the mental model of a buyer trying to find their 'ceiling' price.
-**Solution:** Refactored the UI to show a descending "price ladder."
-**Talking Point:** "I designed the interface to mirror the reseller’s psychological 'buy ceiling.' The UI starts with the Break-Even price as the danger zone and descends to the 'Excellent' buy price, effectively creating a visual goal-seeking experience."
+To run this project locally:
 
----
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/yourusername/marginlogic.git](https://github.com/yourusername/marginlogic.git)
+   ```
+2. **Navigate to the project directory:**
+   ```bash
+   cd marginlogic
+   ```
+3. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+4. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
 
-## 📅 Roadmap & Evolution
-
-### 1. Resilience: Offline PWA Support
-Transforming the app into a Progressive Web App (PWA) so it functions in areas with zero cell service.
-
-### 2. Customization: Dynamic Margin Tiers
-Allowing users to define their own "Excellent" and "Healthy" percentage thresholds to match specific niches.
-
-### 3. Integration: Multi-Platform Presets
-Adding fee presets for platforms like Poshmark, Mercari, and Depop to broaden the utility of the tool.
+## 📝 Disclaimer
+*All calculations provided by MarginLogic are approximate estimates based on user-provided variables. Actual profit or loss is subject to dynamic marketplace conditions, exact buyer locations (sales tax variance), and final shipping dimensions/weights. Profit is not guaranteed.*
