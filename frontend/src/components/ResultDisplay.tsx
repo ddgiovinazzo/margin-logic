@@ -159,8 +159,8 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
                         lineHeight: 1.6,
                     }}
                 >
-                    Ship: ${Number(settings.handlingFee).toFixed(2)} | Handling:
-                    $1.50 + 1% <br />
+                    Ship: ${Number(settings.shippingRate).toFixed(2)} |
+                    Handling: $1.50 + 1% <br />
                     Tax: {settings.taxRate}% | Fees:{" "}
                     {(
                         Number(settings.fvfRate) + Number(settings.adRate)

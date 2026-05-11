@@ -59,7 +59,7 @@ export function SourcingForm({
                     <select
                         id="handlingFee"
                         name="handlingFee"
-                        value={settings.handlingFee}
+                        value={settings.shippingRate}
                         onChange={onSettingsUpdate}
                         style={{
                             padding: "0.8rem",

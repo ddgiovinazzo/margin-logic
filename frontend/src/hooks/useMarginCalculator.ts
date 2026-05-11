@@ -6,7 +6,7 @@ export interface PlatformSettings {
     fvfRate: number | "";
     adRate: number | "";
     fixedFee: number | "";
-    handlingFee: number | "";
+    shippingRate: number | "";
 }
 
 // Each tier now tracks the Buy Limit AND the Reward
@@ -32,7 +32,7 @@ const DEFAULT_SETTINGS: PlatformSettings = {
     fvfRate: 13.25,
     adRate: 2.0,
     fixedFee: 0.3,
-    handlingFee: 0,
+    shippingRate: 0,
 };
 
 export function useMarginCalculator() {
@@ -68,7 +68,7 @@ export function useMarginCalculator() {
         const T = Number(settings.taxRate) / 100;
 
         // S = The raw USPS Commercial rate from the dropdown preset
-        const S = Number(settings.handlingFee) || 0;
+        const S = Number(settings.shippingRate) || 0;
         const FF = Number(settings.fixedFee) || 0;
 
         const feeLoad = (F + A) * (1 + T);
