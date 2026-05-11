@@ -23,12 +23,17 @@ export const GlobalStyle = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
   }
 
+  html, body {
+    height: 100%;
+    height: -webkit-fill-available;
+  }
+
   body {
     background-color: ${colors.background};
     color: ${colors.textPrimary};
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: 1.5;
-    overscroll-behavior-y: none; /* Prevents "bounce" on mobile */
+    overscroll-behavior-y: none;
   }
 `;
 
@@ -38,9 +43,14 @@ export const GlobalStyle = createGlobalStyle`
 
 export const Container = styled.main`
     padding: 0.75rem 1.25rem;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
     max-width: 500px;
     margin: 0 auto;
+
     height: 100vh;
+    height: 100dvh;
+    height: -webkit-fill-available;
+
     display: flex;
     flex-direction: column;
     overflow: hidden;
