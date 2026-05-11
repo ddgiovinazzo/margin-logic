@@ -1,12 +1,13 @@
+import React from "react";
 import {
+    Input,
     InputGrid,
     InputRow,
-    SectionLabel,
     InputWrapper,
     Label,
-    Input,
     PrimaryButton,
-} from "../styles/Library";
+    SectionLabel,
+} from "./CoreUI";
 import type { PlatformSettings } from "../hooks/useMarginCalculator";
 
 interface SourcingFormProps {
@@ -16,7 +17,7 @@ interface SourcingFormProps {
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     ) => void;
     onPriceUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onCalculate: (e: React.SubmitEvent<HTMLFormElement>) => void;
+    onCalculate: (e: React.SyntheticEvent) => void;
 }
 
 const SHIPPING_PRESETS = [
@@ -35,37 +36,39 @@ export function SourcingForm({
     onCalculate,
 }: SourcingFormProps) {
     return (
-        <InputGrid onSubmit={onCalculate}>
-            <SectionLabel>Market Target</SectionLabel>
-            <InputWrapper>
-                <Label htmlFor="marketPrice">Average Sold Price ($)</Label>
-                <Input
-                    id="marketPrice"
-                    name="marketPrice"
-                    type="number"
-                    value={marketPrice}
-                    onChange={onPriceUpdate}
-                    placeholder="e.g. 50.00"
-                    min="0.01"
-                    step="0.01"
-                    required
-                />
-            </InputWrapper>
+        <form onSubmit={onCalculate}>
+            <InputGrid>
+                {/* SECTION 1: Revenue & Logistics */}
+                <SectionLabel>Market & Shipping</SectionLabel>
 
-            <SectionLabel>Logistics & Tax</SectionLabel>
-            <InputRow>
                 <InputWrapper>
-                    <Label htmlFor="handlingFee">Shipping Preset</Label>
+                    <Label htmlFor="marketPrice">Average Sold Price ($)</Label>
+                    <Input
+                        id="marketPrice"
+                        type="number"
+                        value={marketPrice}
+                        onChange={onPriceUpdate}
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                        autoFocus
+                    />
+                </InputWrapper>
+
+                <InputWrapper>
+                    <Label htmlFor="shippingRate">Shipping Preset</Label>
                     <select
-                        id="handlingFee"
-                        name="handlingFee"
+                        id="shippingRate"
+                        name="shippingRate"
                         value={settings.shippingRate}
                         onChange={onSettingsUpdate}
                         style={{
+                            width: "100%",
                             padding: "0.8rem",
                             borderRadius: "8px",
                             border: "1px solid #CCC",
                             fontSize: "1rem",
+                            backgroundColor: "#F9FAFB",
                         }}
                     >
                         {SHIPPING_PRESETS.map((p) => (
@@ -75,60 +78,66 @@ export function SourcingForm({
                         ))}
                     </select>
                 </InputWrapper>
-                <InputWrapper>
-                    <Label htmlFor="taxRate">Sales Tax %</Label>
-                    <Input
-                        id="taxRate"
-                        name="taxRate"
-                        type="number"
-                        value={settings.taxRate}
-                        onChange={onSettingsUpdate}
-                        min="0"
-                        max="100"
-                        step="0.001"
-                    />
-                </InputWrapper>
-            </InputRow>
 
-            <SectionLabel>Platform Fees</SectionLabel>
-            <InputRow>
-                <InputWrapper>
-                    <Label htmlFor="fvfRate">FVF %</Label>
-                    <Input
-                        id="fvfRate"
-                        name="fvfRate"
-                        type="number"
-                        value={settings.fvfRate}
-                        onChange={onSettingsUpdate}
-                        step="0.01"
-                    />
-                </InputWrapper>
-                {/* Added Fixed Fee Back 👇 */}
-                <InputWrapper>
-                    <Label htmlFor="fixedFee">Fixed Fee ($)</Label>
-                    <Input
-                        id="fixedFee"
-                        name="fixedFee"
-                        type="number"
-                        value={settings.fixedFee}
-                        onChange={onSettingsUpdate}
-                        step="0.01"
-                    />
-                </InputWrapper>
-                <InputWrapper>
-                    <Label htmlFor="adRate">Ads %</Label>
-                    <Input
-                        id="adRate"
-                        name="adRate"
-                        type="number"
-                        value={settings.adRate}
-                        onChange={onSettingsUpdate}
-                        step="0.1"
-                    />
-                </InputWrapper>
-            </InputRow>
+                {/* SECTION 2: Platform & Government Overhead */}
+                <SectionLabel style={{ marginTop: "1rem" }}>
+                    Fees & Tax
+                </SectionLabel>
+
+                {/* Row 1: The eBay Percentages */}
+                <InputRow>
+                    <InputWrapper>
+                        <Label htmlFor="fvfRate">FVF %</Label>
+                        <Input
+                            id="fvfRate"
+                            name="fvfRate"
+                            type="number"
+                            value={settings.fvfRate}
+                            onChange={onSettingsUpdate}
+                            step="0.01"
+                        />
+                    </InputWrapper>
+                    <InputWrapper>
+                        <Label htmlFor="adRate">Ads %</Label>
+                        <Input
+                            id="adRate"
+                            name="adRate"
+                            type="number"
+                            value={settings.adRate}
+                            onChange={onSettingsUpdate}
+                            step="0.1"
+                        />
+                    </InputWrapper>
+                </InputRow>
+
+                {/* Row 2: Sales Tax & Fixed Fee */}
+                <InputRow>
+                    <InputWrapper>
+                        <Label htmlFor="taxRate">Sales Tax %</Label>
+                        <Input
+                            id="taxRate"
+                            name="taxRate"
+                            type="number"
+                            value={settings.taxRate}
+                            onChange={onSettingsUpdate}
+                            step="0.001"
+                        />
+                    </InputWrapper>
+                    <InputWrapper>
+                        <Label htmlFor="fixedFee">Fixed Fee ($)</Label>
+                        <Input
+                            id="fixedFee"
+                            name="fixedFee"
+                            type="number"
+                            value={settings.fixedFee}
+                            onChange={onSettingsUpdate}
+                            step="0.01"
+                        />
+                    </InputWrapper>
+                </InputRow>
+            </InputGrid>
 
             <PrimaryButton type="submit">FIND MAX BUY PRICE</PrimaryButton>
-        </InputGrid>
+        </form>
     );
 }

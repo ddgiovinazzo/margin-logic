@@ -6,7 +6,7 @@ import {
     ModalOverlay,
     PrimaryButton,
     GhostButton,
-} from "./styles/Library";
+} from "./components/CoreUI";
 import { useMarginCalculator } from "./hooks/useMarginCalculator";
 import { ResultDisplay } from "./components/ResultDisplay";
 import { SourcingForm } from "./components/SourcingForm";

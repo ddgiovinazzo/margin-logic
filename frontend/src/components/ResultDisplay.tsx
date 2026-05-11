@@ -1,6 +1,7 @@
-import { colors } from "../styles/colors";
+import { colors } from "../utils/colors";
 import type { PlatformSettings } from "../hooks/useMarginCalculator";
 import {
+    DisclaimerText,
     Divider,
     HelpText,
     Label,
@@ -10,7 +11,7 @@ import {
     ResultHeading,
     TierItem,
     TierValueGroup,
-} from "../styles/Library";
+} from "./CoreUI";
 
 interface ResultDisplayProps {
     tiers: {
@@ -167,16 +168,12 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
                     ).toFixed(1)}
                     % | Fixed: ${Number(settings.fixedFee).toFixed(2)}
                 </HelpText>
-                <HelpText
-                    style={{
-                        fontSize: "0.6rem",
-                        fontStyle: "italic",
-                        opacity: 0.8,
-                    }}
-                >
+
+                {/* Replaced the inline-styled HelpText with your new component */}
+                <DisclaimerText>
                     * Disclaimer: All values are approximate. <br />
                     Profit or loss is not guaranteed.
-                </HelpText>
+                </DisclaimerText>
             </Divider>
         </ResultCard>
     );

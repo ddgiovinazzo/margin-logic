@@ -11,7 +11,7 @@
  */
 
 import styled, { createGlobalStyle } from "styled-components";
-import { colors } from "./colors";
+import { colors } from "../utils/colors";
 import { ProfitStatus } from "../utils/sourcing";
 
 export const GlobalStyle = createGlobalStyle`
@@ -54,16 +54,25 @@ export const AppHeader = styled.header`
 `;
 
 export const Title = styled.h1`
-    font-size: 1.25rem;
+    font-size: 2.25rem; /* Massive, bold branding */
     font-weight: 900;
     color: ${colors.textPrimary};
-    letter-spacing: -0.03em;
+    letter-spacing: -0.03em; /* Tighter tracking looks more modern */
+    margin: 0;
 `;
 
 export const HelpText = styled.p`
     font-size: 0.85rem;
     color: ${colors.textMuted};
     margin-top: 0.25rem;
+`;
+
+export const DisclaimerText = styled.p`
+    font-size: 0.65rem;
+    font-style: italic;
+    color: ${colors.textMuted};
+    margin-top: 0.5rem;
+    line-height: 1.4;
 `;
 
 /**
@@ -89,14 +98,14 @@ export const InputWrapper = styled.div`
 `;
 
 export const SectionLabel = styled.h2`
-    font-size: 0.65rem;
+    font-size: 0.95rem; /* Bumped up from tiny text */
     font-weight: 800;
-    color: ${colors.textMuted};
+    color: ${colors.textSecondary};
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin: 1.25rem 0 0.25rem 0;
-    border-bottom: 1px solid ${colors.surface};
-    padding-bottom: 0.25rem;
+    letter-spacing: 0.08em;
+    margin: 1.5rem 0 1.25rem 0; /* Extra breathing room */
+    border-bottom: 2px solid ${colors.border}; /* Thicker, more grounded divider */
+    padding-bottom: 0.5rem;
 
     &:first-of-type {
         margin-top: 0;
@@ -105,10 +114,10 @@ export const SectionLabel = styled.h2`
 
 export const Label = styled.label`
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.8rem; /* Bumped up */
     font-weight: 700;
     color: ${colors.textSecondary};
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 `;
@@ -117,10 +126,10 @@ export const Input = styled.input.attrs({
     onWheel: (e) => (e.target as HTMLInputElement).blur(),
 })`
     width: 100%;
-    padding: 0.85rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border: 2px solid ${colors.surface};
+    padding: 1rem; /* Huge tap target */
+    font-size: 1.25rem; /* Massive numbers */
+    font-weight: 800; /* Bold numbers for quick reading */
+    border: 1px solid ${colors.border};
     border-radius: 12px;
     background-color: ${colors.surface};
     color: ${colors.textPrimary};
@@ -131,7 +140,7 @@ export const Input = styled.input.attrs({
         outline: none;
         border-color: ${colors.primary};
         background-color: ${colors.background};
-        box-shadow: 0 0 0 4px ${colors.primary}15;
+        box-shadow: 0 0 0 3px ${colors.neutralBg}; /* Accessible focus ring */
     }
 
     &::placeholder {
@@ -203,7 +212,6 @@ export const PriceDisplay = styled.div`
 export const Divider = styled.div`
     margin-top: 1rem;
     padding-top: 1.25rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
 `;
 
 export const MetricsRow = styled.div`
