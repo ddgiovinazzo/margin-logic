@@ -63,33 +63,41 @@ export function useMarginCalculator() {
         if (P <= 0) return;
 
         // --- INTERNAL MATH ENGINE ---
-        // We cast to Number here to handle values coming from the <select> or <input>
         const F = Number(settings.fvfRate) / 100;
         const A = Number(settings.adRate) / 100;
         const T = Number(settings.taxRate) / 100;
-        const H = Number(settings.handlingFee) || 0;
+
+        // S = The raw USPS Commercial rate from the dropdown preset
+        const S = Number(settings.handlingFee) || 0;
         const FF = Number(settings.fixedFee) || 0;
 
-        // The formula: P = (C + H + Fixed Fee) / (1 - (F+A) * (1+T))
-        // Re-calculated to isolate C (Cost):
         const feeLoad = (F + A) * (1 + T);
 
         const getTierData = (targetMarginPct: number): TierResult => {
             const profitDollars = P * (targetMarginPct / 100);
-            const maxBuy = P * (1 - feeLoad) - H - FF - profitDollars;
+
+            // 1. Calculate the remaining pool of money before the Item Cost (C)
+            // and the fixed $1.50 portion of the handling formula.
+            const netPool = P * (1 - feeLoad) - S - FF - profitDollars;
+
+            // 2. Subtract the $1.50 fixed baseline
+            const netAfterFixedHandling = netPool - 1.5;
+
+            // 3. Isolate C by dividing out the 1% multiplier (1.01)
+            const maxBuy = netAfterFixedHandling / 1.01;
 
             return {
-                maxBuy: maxBuy, // REMOVE the > 0 check so negative values pass through
+                maxBuy: maxBuy,
                 profit: profitDollars,
             };
         };
 
         setAnalysis({
             tiers: {
-                excellent: getTierData(30), // 30% Net Margin
-                healthy: getTierData(20), // 20% Net Margin
-                thin: getTierData(10), // 10% Net Margin
-                breakEven: getTierData(0), // 0% (The Floor)
+                excellent: getTierData(30),
+                healthy: getTierData(20),
+                thin: getTierData(10),
+                breakEven: getTierData(0),
             },
             label: `Analysis for $${P.toFixed(2)} Target`,
         });

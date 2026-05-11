@@ -32,7 +32,7 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
             <ResultHeading>{label}</ResultHeading>
 
             {isTotalLoss ? (
-                /* 🚨 UNPROFITABLE STATE: Re-using TierItem but stacking it vertically */
+                /* 🚨 UNPROFITABLE STATE */
                 <TierItem
                     style={{
                         flexDirection: "column",
@@ -64,7 +64,7 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
                     </TierValueGroup>
                 </TierItem>
             ) : (
-                /* ✅ PROFITABLE STATE: Standard Horizontal Ladder */
+                /* ✅ PROFITABLE STATE */
                 <>
                     <TierItem>
                         <Label
@@ -153,10 +153,15 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
             <Divider>
                 <ResultHeading>Fee Audit</ResultHeading>
                 <HelpText
-                    style={{ fontSize: "0.7rem", marginBottom: "0.5rem" }}
+                    style={{
+                        fontSize: "0.7rem",
+                        marginBottom: "0.5rem",
+                        lineHeight: 1.6,
+                    }}
                 >
-                    Ship: ${Number(settings.handlingFee).toFixed(2)} | Tax:{" "}
-                    {settings.taxRate}% | Fees:{" "}
+                    Ship: ${Number(settings.handlingFee).toFixed(2)} | Handling:
+                    $1.50 + 1% <br />
+                    Tax: {settings.taxRate}% | Fees:{" "}
                     {(
                         Number(settings.fvfRate) + Number(settings.adRate)
                     ).toFixed(1)}
