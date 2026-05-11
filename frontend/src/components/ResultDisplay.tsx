@@ -1,92 +1,178 @@
-import {
-    ResultCard,
-    Label,
-    Divider,
-    MetricValue,
-    ResultHeading,
-    HelpText,
-} from "../styles/Library";
 import { colors } from "../styles/colors";
 import type { PlatformSettings } from "../hooks/useMarginCalculator";
+import {
+    Divider,
+    HelpText,
+    Label,
+    MetricValue,
+    ProfitText,
+    ResultCard,
+    ResultHeading,
+    TierItem,
+    TierValueGroup,
+} from "../styles/Library";
 
 interface ResultDisplayProps {
     tiers: {
-        excellent: number;
-        healthy: number;
-        thin: number;
-        breakEven: number;
+        excellent: { maxBuy: number; profit: number };
+        healthy: { maxBuy: number; profit: number };
+        thin: { maxBuy: number; profit: number };
+        breakEven: { maxBuy: number; profit: number };
     };
     settings: PlatformSettings;
     label: string;
 }
 
 export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
+    const isTotalLoss = tiers.breakEven.maxBuy <= 0;
+    const baseLossAmount = Math.abs(tiers.breakEven.maxBuy);
+
     return (
-        <ResultCard $status="neutral">
+        <ResultCard $status={isTotalLoss ? "critical" : "neutral"}>
             <ResultHeading>{label}</ResultHeading>
 
-            {/* 1. Break-Even (Bottom of the ladder) */}
-            <TierItem>
-                <Label style={{ color: colors.critical }}>
-                    Break-Even (0%)
-                </Label>
-                <MetricValue $status="critical">
-                    ${tiers.breakEven.toFixed(2)}
-                </MetricValue>
-            </TierItem>
+            {isTotalLoss ? (
+                /* 🚨 UNPROFITABLE STATE: Re-using TierItem but stacking it vertically */
+                <TierItem
+                    style={{
+                        flexDirection: "column",
+                        borderBottom: "none",
+                        padding: "1.5rem 0",
+                    }}
+                >
+                    <Label
+                        style={{
+                            color: colors.critical,
+                            marginBottom: "0.5rem",
+                        }}
+                    >
+                        Unprofitable Item
+                    </Label>
+                    <TierValueGroup style={{ alignItems: "center" }}>
+                        <MetricValue
+                            $status="critical"
+                            style={{ fontSize: "2.25rem", lineHeight: 1 }}
+                        >
+                            DO NOT BUY
+                        </MetricValue>
+                        <ProfitText
+                            $color={colors.critical}
+                            style={{ marginTop: "0.5rem" }}
+                        >
+                            ~${baseLossAmount.toFixed(2)} Est. Loss (If Free)
+                        </ProfitText>
+                    </TierValueGroup>
+                </TierItem>
+            ) : (
+                /* ✅ PROFITABLE STATE: Standard Horizontal Ladder */
+                <>
+                    <TierItem>
+                        <Label
+                            style={{ color: colors.critical, marginBottom: 0 }}
+                        >
+                            Break-Even (0%)
+                        </Label>
+                        <TierValueGroup>
+                            <MetricValue $status="critical">
+                                ~${tiers.breakEven.maxBuy.toFixed(2)}
+                            </MetricValue>
+                            <ProfitText $color={colors.critical}>
+                                ~$0.00 Est. Profit
+                            </ProfitText>
+                        </TierValueGroup>
+                    </TierItem>
 
-            {/* 2. Standard (10%) */}
-            <TierItem>
-                <Label style={{ color: colors.textSecondary }}>
-                    Standard (10%)
-                </Label>
-                <MetricValue $status="neutral">
-                    ${tiers.thin.toFixed(2)}
-                </MetricValue>
-            </TierItem>
+                    {tiers.thin.maxBuy > 0 && (
+                        <TierItem>
+                            <Label
+                                style={{
+                                    color: colors.textSecondary,
+                                    marginBottom: 0,
+                                }}
+                            >
+                                Standard (10%)
+                            </Label>
+                            <TierValueGroup>
+                                <MetricValue $status="neutral">
+                                    ~${tiers.thin.maxBuy.toFixed(2)}
+                                </MetricValue>
+                                <ProfitText $color={colors.textSecondary}>
+                                    ~${tiers.thin.profit.toFixed(2)} Est. Profit
+                                </ProfitText>
+                            </TierValueGroup>
+                        </TierItem>
+                    )}
 
-            {/* 3. Healthy (20%) */}
-            <TierItem>
-                <Label style={{ color: colors.warning }}>Healthy (20%)</Label>
-                <MetricValue $status="warning">
-                    ${tiers.healthy.toFixed(2)}
-                </MetricValue>
-            </TierItem>
+                    {tiers.healthy.maxBuy > 0 && (
+                        <TierItem>
+                            <Label
+                                style={{
+                                    color: colors.warning,
+                                    marginBottom: 0,
+                                }}
+                            >
+                                Healthy (20%)
+                            </Label>
+                            <TierValueGroup>
+                                <MetricValue $status="warning">
+                                    ~${tiers.healthy.maxBuy.toFixed(2)}
+                                </MetricValue>
+                                <ProfitText $color={colors.warning}>
+                                    ~${tiers.healthy.profit.toFixed(2)} Est.
+                                    Profit
+                                </ProfitText>
+                            </TierValueGroup>
+                        </TierItem>
+                    )}
 
-            {/* 4. Excellent (Top of the ladder) */}
-            <TierItem>
-                <Label style={{ color: colors.positive }}>
-                    Excellent (30%)
-                </Label>
-                <MetricValue $status="positive">
-                    ${tiers.excellent.toFixed(2)}
-                </MetricValue>
-            </TierItem>
+                    {tiers.excellent.maxBuy > 0 && (
+                        <TierItem>
+                            <Label
+                                style={{
+                                    color: colors.positive,
+                                    marginBottom: 0,
+                                }}
+                            >
+                                Excellent (30%)
+                            </Label>
+                            <TierValueGroup>
+                                <MetricValue $status="positive">
+                                    ~${tiers.excellent.maxBuy.toFixed(2)}
+                                </MetricValue>
+                                <ProfitText $color={colors.positive}>
+                                    ~${tiers.excellent.profit.toFixed(2)} Est.
+                                    Profit
+                                </ProfitText>
+                            </TierValueGroup>
+                        </TierItem>
+                    )}
+                </>
+            )}
 
+            {/* FEE AUDIT */}
             <Divider>
                 <ResultHeading>Fee Audit</ResultHeading>
-                <HelpText style={{ fontSize: "0.7rem" }}>
-                    Ship: ${settings.handlingFee} | Tax: {settings.taxRate}% |
-                    Fees:{" "}
+                <HelpText
+                    style={{ fontSize: "0.7rem", marginBottom: "0.5rem" }}
+                >
+                    Ship: ${Number(settings.handlingFee).toFixed(2)} | Tax:{" "}
+                    {settings.taxRate}% | Fees:{" "}
                     {(
                         Number(settings.fvfRate) + Number(settings.adRate)
                     ).toFixed(1)}
-                    %
+                    % | Fixed: ${Number(settings.fixedFee).toFixed(2)}
+                </HelpText>
+                <HelpText
+                    style={{
+                        fontSize: "0.6rem",
+                        fontStyle: "italic",
+                        opacity: 0.8,
+                    }}
+                >
+                    * Disclaimer: All values are approximate. <br />
+                    Profit or loss is not guaranteed.
                 </HelpText>
             </Divider>
         </ResultCard>
     );
 }
-
-import styled from "styled-components";
-const TierItem = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-
-    &:last-of-type {
-        border-bottom: none;
-    }
-`;

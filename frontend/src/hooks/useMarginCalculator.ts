@@ -9,11 +9,17 @@ export interface PlatformSettings {
     handlingFee: number | "";
 }
 
+// Each tier now tracks the Buy Limit AND the Reward
+interface TierResult {
+    maxBuy: number;
+    profit: number;
+}
+
 interface PriceTiers {
-    excellent: number;
-    healthy: number;
-    thin: number;
-    breakEven: number;
+    excellent: TierResult;
+    healthy: TierResult;
+    thin: TierResult;
+    breakEven: TierResult;
 }
 
 interface AnalysisState {
@@ -22,7 +28,7 @@ interface AnalysisState {
 }
 
 const DEFAULT_SETTINGS: PlatformSettings = {
-    taxRate: 8.375,
+    taxRate: 8.375, // Rockland County baseline
     fvfRate: 13.25,
     adRate: 2.0,
     fixedFee: 0.3,
@@ -39,53 +45,66 @@ export function useMarginCalculator() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
+    // Initial state updated to match TierResult structure
     const [analysis, setAnalysis] = useState<AnalysisState>({
-        tiers: { excellent: 0, healthy: 0, thin: 0, breakEven: 0 },
+        tiers: {
+            excellent: { maxBuy: 0, profit: 0 },
+            healthy: { maxBuy: 0, profit: 0 },
+            thin: { maxBuy: 0, profit: 0 },
+            breakEven: { maxBuy: 0, profit: 0 },
+        },
         label: "Enter Market Price",
     });
 
-    const handleCalculate = (e?: React.FormEvent) => {
-        if (e) e.preventDefault();
-        setError(null);
+    const handleCalculate = (e: React.SyntheticEvent) => {
+        e.preventDefault();
 
-        if (!marketPrice || marketPrice <= 0) {
-            setError("Average Sold Price is required.");
-            return;
-        }
+        const P = Number(marketPrice);
+        if (P <= 0) return;
 
         // --- INTERNAL MATH ENGINE ---
-        const P = Number(marketPrice);
+        // We cast to Number here to handle values coming from the <select> or <input>
         const F = Number(settings.fvfRate) / 100;
         const A = Number(settings.adRate) / 100;
         const T = Number(settings.taxRate) / 100;
         const H = Number(settings.handlingFee) || 0;
         const FF = Number(settings.fixedFee) || 0;
 
+        // The formula: P = (C + H + Fixed Fee) / (1 - (F+A) * (1+T))
+        // Re-calculated to isolate C (Cost):
         const feeLoad = (F + A) * (1 + T);
 
-        const getMaxBuy = (targetMargin: number) => {
-            const targetProfit = P * (targetMargin / 100);
-            return P * (1 - feeLoad) - H - FF - targetProfit;
+        const getTierData = (targetMarginPct: number): TierResult => {
+            const profitDollars = P * (targetMarginPct / 100);
+            const maxBuy = P * (1 - feeLoad) - H - FF - profitDollars;
+
+            return {
+                maxBuy: maxBuy, // REMOVE the > 0 check so negative values pass through
+                profit: profitDollars,
+            };
         };
 
         setAnalysis({
             tiers: {
-                excellent: getMaxBuy(30),
-                healthy: getMaxBuy(20),
-                thin: getMaxBuy(10),
-                breakEven: getMaxBuy(0),
+                excellent: getTierData(30), // 30% Net Margin
+                healthy: getTierData(20), // 20% Net Margin
+                thin: getTierData(10), // 10% Net Margin
+                breakEven: getTierData(0), // 0% (The Floor)
             },
-            label: `Max Buy for $${P.toFixed(2)} Target`,
+            label: `Analysis for $${P.toFixed(2)} Target`,
         });
 
         setIsModalOpen(true);
     };
 
-    const handleSettingsUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSettingsUpdate = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    ) => {
         const { name, value } = e.target;
+
         setSettings((prev) => ({
             ...prev,
-            [name]: value === "" ? "" : parseFloat(value),
+            [name]: value,
         }));
     };
 
@@ -110,6 +129,6 @@ export function useMarginCalculator() {
         handleCalculate,
         closeModal: () => setIsModalOpen(false),
         resetForm,
-        isLoading: false, // Hardcoded false as calculation is now instant
+        isLoading: false,
     };
 }

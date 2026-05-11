@@ -313,3 +313,30 @@ export const SrOnly = styled.span`
     white-space: nowrap;
     border-width: 0;
 `;
+
+export const TierItem = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+    &:last-of-type {
+        border-bottom: none;
+    }
+`;
+
+export const TierValueGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+`;
+
+export const ProfitText = styled.span<{ $color?: string }>`
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: ${(props) => props.$color || "inherit"};
+    margin-top: 0.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+`;
