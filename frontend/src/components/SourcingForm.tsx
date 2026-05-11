@@ -40,7 +40,7 @@ export function SourcingForm({
                 />
             </InputWrapper>
 
-            <SectionLabel>Logistics & Tax (Persistent)</SectionLabel>
+            <SectionLabel>Logistics & Tax</SectionLabel>
             <InputRow>
                 <InputWrapper>
                     <Label htmlFor="handlingFee">Shipping ($)</Label>
