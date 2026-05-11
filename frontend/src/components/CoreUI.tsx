@@ -83,11 +83,10 @@ export const DisclaimerText = styled.p`
  * FORM COMPONENTS
  */
 
-export const InputGrid = styled.form`
+export const InputGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.5rem;
-    flex: 1;
 `;
 
 export const FlexForm = styled.form`
@@ -142,26 +141,37 @@ export const Input = styled.input.attrs({
     onWheel: (e) => (e.target as HTMLInputElement).blur(),
 })`
     width: 100%;
-    padding: 1rem; /* Huge tap target */
-    font-size: 1.25rem; /* Massive numbers */
-    font-weight: 800; /* Bold numbers for quick reading */
+    padding: 1rem;
+    font-size: 1.25rem;
+    font-weight: 800;
     border: 1px solid ${colors.border};
     border-radius: 12px;
     background-color: ${colors.surface};
     color: ${colors.textPrimary};
     transition: all 0.2s ease-in-out;
-    appearance: none; /* Removes mobile default styling */
+    appearance: none;
 
     &:focus {
         outline: none;
         border-color: ${colors.primary};
         background-color: ${colors.background};
-        box-shadow: 0 0 0 3px ${colors.neutralBg}; /* Accessible focus ring */
+        box-shadow: 0 0 0 3px ${colors.neutralBg};
     }
 
     &::placeholder {
         color: ${colors.textMuted};
         opacity: 0.5;
+    }
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    &[type="number"] {
+        appearance: textfield;
+        -moz-appearance: textfield;
     }
 `;
 
