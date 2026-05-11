@@ -61,12 +61,6 @@ export const Title = styled.h1`
     margin: 0;
 `;
 
-export const HelpText = styled.p`
-    font-size: 0.85rem;
-    color: ${colors.textMuted};
-    margin-top: 0.25rem;
-`;
-
 export const DisclaimerText = styled.p`
     font-size: 0.65rem;
     font-style: italic;
@@ -124,12 +118,12 @@ export const SectionLabel = styled.h2`
     }
 `;
 
-export const Label = styled.label`
+export const Label = styled.label<{ $color?: string; $noMargin?: boolean }>`
     display: block;
-    font-size: 0.8rem; /* Bumped up */
+    font-size: 0.8rem;
     font-weight: 700;
-    color: ${colors.textSecondary};
-    margin-bottom: 0.5rem;
+    color: ${(props) => props.$color || colors.textSecondary};
+    margin-bottom: ${(props) => (props.$noMargin ? "0" : "0.5rem")};
     text-transform: uppercase;
     letter-spacing: 0.05em;
 `;
@@ -212,28 +206,17 @@ export const ResultHeading = styled.h2`
     opacity: 0.8;
 `;
 
-export const PriceDisplay = styled.div`
-    font-size: 3rem;
-    font-weight: 900;
-    color: ${colors.textPrimary};
-    letter-spacing: -2px;
-    line-height: 1;
-    margin-bottom: 1rem;
-`;
-
 export const Divider = styled.div`
     margin-top: 1rem;
     padding-top: 1.25rem;
 `;
 
-export const MetricsRow = styled.div`
-    display: flex;
-    justify-content: space-around;
-    gap: 1rem;
-`;
-
-export const MetricValue = styled.div<{ $status?: ProfitStatus }>`
-    font-size: 1.25rem;
+export const MetricValue = styled.div<{
+    $status?: ProfitStatus;
+    $isLarge?: boolean;
+}>`
+    font-size: ${(props) => (props.$isLarge ? "2.25rem" : "1.25rem")};
+    line-height: ${(props) => (props.$isLarge ? "1" : "inherit")};
     font-weight: 900;
     color: ${(props) =>
         props.$status
@@ -241,33 +224,9 @@ export const MetricValue = styled.div<{ $status?: ProfitStatus }>`
             : colors.textPrimary};
 `;
 
-export const StatusLabel = styled.p`
-    margin-top: 1rem;
-    font-weight: 800;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: inherit;
-`;
-
 /**
  * BUTTONS & ACTIONS
  */
-
-export const ActionBar = styled.div`
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 1rem 1.25rem 2rem 1.25rem; /* Extra padding for iOS bottom bar */
-    background: linear-gradient(to top, ${colors.background} 80%, transparent);
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    max-width: 500px;
-    margin: 0 auto;
-`;
 
 export const PrimaryButton = styled.button`
     width: 100%;
@@ -306,50 +265,25 @@ export const GhostButton = styled.button`
  * FEEDBACK COMPONENTS
  */
 
-export const ErrorBanner = styled.div`
-    background-color: ${colors.criticalBg};
-    color: ${colors.critical};
-    padding: 0.85rem;
-    border-radius: 12px;
-    margin: 0.5rem 0;
-    font-size: 0.85rem;
-    font-weight: 800;
-    text-align: center;
-    border: 1px solid ${colors.critical}30;
+export const TierItem = styled.div<{ $isLoss?: boolean }>`
     display: flex;
+    justify-content: ${(props) => (props.$isLoss ? "center" : "space-between")};
     align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-`;
-
-export const SrOnly = styled.span`
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-`;
-
-export const TierItem = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.85rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: ${(props) => (props.$isLoss ? "1.5rem 0" : "0.85rem 0")};
+    flex-direction: ${(props) => (props.$isLoss ? "column" : "row")};
+    border-bottom: ${(props) =>
+        props.$isLoss ? "none" : "1px solid rgba(0, 0, 0, 0.05)"};
 
     &:last-of-type {
         border-bottom: none;
     }
 `;
 
-export const TierValueGroup = styled.div`
+export const TierValueGroup = styled.div<{ $alignCenter?: boolean }>`
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: ${(props) => (props.$alignCenter ? "center" : "flex-end")};
+    gap: ${(props) => (props.$alignCenter ? "0.5rem" : "0")};
 `;
 
 export const ProfitText = styled.span<{ $color?: string }>`
@@ -359,4 +293,11 @@ export const ProfitText = styled.span<{ $color?: string }>`
     margin-top: 0.15rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+`;
+
+export const AuditText = styled.p`
+    font-size: 0.7rem;
+    color: ${colors.textMuted};
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
 `;

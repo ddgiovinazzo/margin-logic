@@ -1,9 +1,9 @@
 import { colors } from "../utils/colors";
 import type { PlatformSettings } from "../hooks/useMarginCalculator";
 import {
+    AuditText,
     DisclaimerText,
     Divider,
-    HelpText,
     Label,
     MetricValue,
     ProfitText,
@@ -34,32 +34,13 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
 
             {isTotalLoss ? (
                 /* 🚨 UNPROFITABLE STATE */
-                <TierItem
-                    style={{
-                        flexDirection: "column",
-                        borderBottom: "none",
-                        padding: "1.5rem 0",
-                    }}
-                >
-                    <Label
-                        style={{
-                            color: colors.critical,
-                            marginBottom: "0.5rem",
-                        }}
-                    >
-                        Unprofitable Item
-                    </Label>
-                    <TierValueGroup style={{ alignItems: "center" }}>
-                        <MetricValue
-                            $status="critical"
-                            style={{ fontSize: "2.25rem", lineHeight: 1 }}
-                        >
+                <TierItem $isLoss>
+                    <Label $color={colors.critical}>Unprofitable Item</Label>
+                    <TierValueGroup $alignCenter>
+                        <MetricValue $status="critical" $isLarge>
                             DO NOT BUY
                         </MetricValue>
-                        <ProfitText
-                            $color={colors.critical}
-                            style={{ marginTop: "0.5rem" }}
-                        >
+                        <ProfitText $color={colors.critical}>
                             ~${baseLossAmount.toFixed(2)} Est. Loss (If Free)
                         </ProfitText>
                     </TierValueGroup>
@@ -68,9 +49,7 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
                 /* ✅ PROFITABLE STATE */
                 <>
                     <TierItem>
-                        <Label
-                            style={{ color: colors.critical, marginBottom: 0 }}
-                        >
+                        <Label $color={colors.critical} $noMargin>
                             Break-Even (0%)
                         </Label>
                         <TierValueGroup>
@@ -85,14 +64,7 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
 
                     {tiers.thin.maxBuy > 0 && (
                         <TierItem>
-                            <Label
-                                style={{
-                                    color: colors.textSecondary,
-                                    marginBottom: 0,
-                                }}
-                            >
-                                Standard (10%)
-                            </Label>
+                            <Label $noMargin>Standard (10%)</Label>
                             <TierValueGroup>
                                 <MetricValue $status="neutral">
                                     ~${tiers.thin.maxBuy.toFixed(2)}
@@ -106,12 +78,7 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
 
                     {tiers.healthy.maxBuy > 0 && (
                         <TierItem>
-                            <Label
-                                style={{
-                                    color: colors.warning,
-                                    marginBottom: 0,
-                                }}
-                            >
+                            <Label $color={colors.warning} $noMargin>
                                 Healthy (20%)
                             </Label>
                             <TierValueGroup>
@@ -128,12 +95,7 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
 
                     {tiers.excellent.maxBuy > 0 && (
                         <TierItem>
-                            <Label
-                                style={{
-                                    color: colors.positive,
-                                    marginBottom: 0,
-                                }}
-                            >
+                            <Label $color={colors.positive} $noMargin>
                                 Excellent (30%)
                             </Label>
                             <TierValueGroup>
@@ -153,13 +115,8 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
             {/* FEE AUDIT */}
             <Divider>
                 <ResultHeading>Fee Audit</ResultHeading>
-                <HelpText
-                    style={{
-                        fontSize: "0.7rem",
-                        marginBottom: "0.5rem",
-                        lineHeight: 1.6,
-                    }}
-                >
+
+                <AuditText>
                     Ship: ${Number(settings.shippingRate).toFixed(2)} |
                     Handling: $1.50 + 1% <br />
                     Tax: {settings.taxRate}% | Fees:{" "}
@@ -167,9 +124,8 @@ export function ResultDisplay({ tiers, settings, label }: ResultDisplayProps) {
                         Number(settings.fvfRate) + Number(settings.adRate)
                     ).toFixed(1)}
                     % | Fixed: ${Number(settings.fixedFee).toFixed(2)}
-                </HelpText>
+                </AuditText>
 
-                {/* Replaced the inline-styled HelpText with your new component */}
                 <DisclaimerText>
                     * Disclaimer: All values are approximate. <br />
                     Profit or loss is not guaranteed.
