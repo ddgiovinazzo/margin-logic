@@ -12,7 +12,6 @@ import type { PlatformSettings } from "../hooks/useMarginCalculator";
 interface SourcingFormProps {
     settings: PlatformSettings;
     marketPrice: number | "";
-    isLoading: boolean;
     onSettingsUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onPriceUpdate: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onCalculate: (e: React.FormEvent) => void;
@@ -21,7 +20,6 @@ interface SourcingFormProps {
 export function SourcingForm({
     settings,
     marketPrice,
-    isLoading,
     onSettingsUpdate,
     onPriceUpdate,
     onCalculate,
@@ -55,7 +53,7 @@ export function SourcingForm({
                     />
                 </InputWrapper>
                 <InputWrapper>
-                    <Label htmlFor="taxRate">Tax (%)</Label>
+                    <Label htmlFor="taxRate">Sales Tax %</Label>
                     <Input
                         id="taxRate"
                         name="taxRate"
@@ -90,9 +88,7 @@ export function SourcingForm({
                 </InputWrapper>
             </InputRow>
 
-            <PrimaryButton type="submit" disabled={isLoading}>
-                {isLoading ? "CALCULATING..." : "FIND MAX BUY PRICE"}
-            </PrimaryButton>
+            <PrimaryButton type="submit">FIND MAX BUY PRICE</PrimaryButton>
         </InputGrid>
     );
 }

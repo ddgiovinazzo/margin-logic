@@ -16,7 +16,7 @@ function App() {
     const {
         settings,
         marketPrice,
-        isLoading,
+        error,
         analysis,
         isModalOpen,
         closeModal,
@@ -24,7 +24,6 @@ function App() {
         handleCalculate,
         handlePriceUpdate,
         resetForm,
-        error,
     } = useMarginCalculator();
 
     return (
@@ -43,7 +42,6 @@ function App() {
                 <SourcingForm
                     settings={settings}
                     marketPrice={marketPrice}
-                    isLoading={isLoading}
                     onSettingsUpdate={handleSettingsUpdate}
                     onPriceUpdate={handlePriceUpdate}
                     onCalculate={handleCalculate}
@@ -61,7 +59,7 @@ function App() {
                                 onClick={closeModal}
                                 style={{ marginTop: "1rem" }}
                             >
-                                Scan Next Item
+                                Done
                             </PrimaryButton>
                         </div>
                     </ModalOverlay>

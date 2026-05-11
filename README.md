@@ -1,82 +1,72 @@
 # MarginLogic
 
-**MarginLogic** is a mobile-first, professional-grade sourcing tool designed for eBay resellers to calculate break-even prices and profit margins in real-time. Built with a focus on speed, accessibility, and high-fidelity technical standards.
+**MarginLogic** is a mobile-first, professional-grade sourcing tool designed for eBay resellers. It reverses the standard profit calculation to determine the **maximum purchase price** in real-time, enabling faster decision-making in the field.
 
 ---
 
 ## 🚀 The Sourcing Protocol
-Unlike generic calculators, MarginLogic implements a **"Green-Light" sourcing workflow**:
-* **Touch-Target Optimization:** 1rem (16px) minimum padding for field-ready use.
-* **Visual Confidence:** Immediate color-coded feedback on sourcing profitability.
-* **Precision Math:** Implements the proprietary break-even formula via a centralized AWS Lambda microservice:
+Unlike generic calculators, MarginLogic implements a **"Ceiling-First" workflow**:
+* **Instant Decision Engine:** Calculations are performed locally for zero-latency feedback during sourcing.
+* **The "Price Ladder":** Displays a descending hierarchy of maximum buy prices for specific margin targets (Excellent 30% down to Break-Even 0%).
+* **Touch-Target Optimization:** 1rem (16px) minimum padding for field-ready use on mobile devices.
+* **Precision Math:** Solves for Item Cost ($C$) based on target Market Price ($P$):
 
-$$
-P = (C + H + \text{Fixed Fee}) / (1 - (F+A) * (1+T))
-$$
+$$ C = P(1 - \text{FeeLoad}) - H - \text{Fixed Fee} - \text{Target Profit} $$
 
 ---
 
 ## 🛠 Technical Stack
 * **Core:** React 19 + TypeScript 5
-* **Styling:** `styled-components` (Custom Atomic Library)
-* **Engine:** Node.js 20 / AWS Lambda
-* **Infrastructure:** AWS SAM (Serverless Application Model) with `esbuild`
+* **State Management:** Custom Hooks with Persistent LocalStorage for platform settings.
+* **Styling:** `styled-components` (Custom Atomic Library with ARIA-friendly themes).
+* **Tooling:** Vite, ESLint `@stylistic`, and **Knip** for dead-code elimination.
 
 ---
 
 ## 📐 Engineering Standards
 This project adheres to a **Zero-Footprint Minimalist Plan**:
-1. **Strict Linting:** Root-level ESLint "Source of Truth" using `@stylistic` for 4-space indentation and 100% type safety.
-2. **Scalable Units:** - `rem` for typography and layout (Accessibility first).
-   - `px` for structural crispness (Borders and dividers).
-3. **Defensive Programming:** - Transient props (`$`) to prevent DOM prop-bleeding.
-   - Project References for shared type safety between Frontend and Backend.
-   - Environment-variable-driven CORS policy (Zero wildcards).
+1. **Strict Linting:** Root-level ESLint "Source of Truth" using 4-space indentation and 100% type safety.
+2. **Performance First:** Eliminated unnecessary network overhead by moving the mathematical engine to the client-side.
+3. **Defensive Programming:** 
+   - Transient props (`$`) to prevent DOM prop-bleeding in styled-components.
+   - Clean architecture: Decoupled business logic (hooks) from the presentation layer.
 
 ---
 
 ## 🏗 Project Structure
 ```bash
-├── backend/            # AWS Lambda & Mathematical Logic
-│   ├── src/            # TypeScript Source
-│   └── template.yaml   # AWS SAM Infrastructure
 ├── frontend/           # Vite + React Application
 │   └── src/
-│       ├── services/   # API Communication Layer
-│       └── components/ # Atomic UI Library (Library.tsx)
-├── shared/             # Unified Type Definitions (@shared)
-└── eslint.config.mjs   # Global Monorepo Configuration
+│       ├── hooks/      # Math Engine & LocalStorage Sync
+│       ├── components/ # Atomic UI (SourcingForm, ResultDisplay)
+│       └── styles/     # Theme-aware Atomic Library
+├── shared/             # Unified Type Definitions
+└── knip.json           # Project Integrity & Dead-Code Configuration
 ```
 
 ---
 
 ## 🎤 Interview Talking Points (Development Logs)
 
-### 1. The CORS Handshake
-**Problem:** Browser blocked requests to the backend due to missing CORS headers during the "Preflight" (OPTIONS) check, despite local POST requests working in Postman.
-**Solution:** Refactored the AWS Lambda to handle `OPTIONS` requests explicitly and updated the `template.yaml` `Globals` to allow specific origins.
-**Talking Point:** "I implemented a strict security policy by locking the `Access-Control-Allow-Origin` to an environment variable, ensuring the backend is protected while remaining flexible for different deployment environments."
+### 1. The Architectural Pivot (Latency vs. Cloud)
+**Problem:** Initial versions used AWS Lambda for calculations, but network latency and "Cold Starts" hindered the real-time sourcing experience in low-signal areas.
+**Solution:** Migrated the mathematical logic to a client-side engine.
+**Talking Point:** "I pivoted the architecture to favor UX over a backend-heavy approach. By moving the math engine to the client, I achieved sub-millisecond response times and made the tool resilient to poor network conditions, while simultaneously reducing AWS operational costs to zero."
 
-### 2. Monorepo Type Safety
-**Problem:** Keeping data structures in sync between the React UI and the AWS Lambda.
-**Solution:** Implemented TypeScript Project References and a shared workspace.
-**Talking Point:** "I established a `shared/` directory for unified type definitions. This creates a 'single source of truth' for my data structures, preventing runtime errors and ensuring the frontend never sends a payload the backend doesn't expect."
+### 2. The "Better is Lower" UI Logic
+**Problem:** Standard calculators show profit as an increasing value, which doesn't match the mental model of a buyer trying to find their 'ceiling' price.
+**Solution:** Refactored the UI to show a descending "price ladder."
+**Talking Point:** "I designed the interface to mirror the reseller’s psychological 'buy ceiling.' The UI starts with the Break-Even price as the danger zone and descends to the 'Excellent' buy price, effectively creating a visual goal-seeking experience."
 
 ---
 
-## 📅 Upcoming Improvements & Roadmap
+## 📅 Roadmap & Evolution
 
-### 1. Optimization: Input Debouncing
-**Target:** Network Efficiency.
-Currently, every keystroke triggers a Lambda invocation. I plan to implement a custom `useDebounce` hook to delay the API call by 300ms.
-* **Benefit:** Reduces billed AWS duration and unnecessary network traffic by up to 80% during active typing sessions.
+### 1. Resilience: Offline PWA Support
+Transforming the app into a Progressive Web App (PWA) so it functions in areas with zero cell service.
 
-### 2. Resilience: Global Error Handling
-**Target:** Fault Tolerance.
-Adding a robust UI feedback loop for when the backend is offline or network connectivity is lost.
-* **Benefit:** Implements "Backend Offline" toast notifications and graceful UI fallbacks, ensuring the user is never left in an ambiguous state.
+### 2. Customization: Dynamic Margin Tiers
+Allowing users to define their own "Excellent" and "Healthy" percentage thresholds to match specific niches.
 
-### 3. Scalability: Cloud Deployment
-**Target:** Production Readiness.
-Transitioning from `sam local` to a live production environment.
-* **Benefit:** Demonstrates mastery of Infrastructure as Code (IaC) by using CloudFormation parameter overrides to manage production vs. development CORS origins.
+### 3. Integration: Multi-Platform Presets
+Adding fee presets for platforms like Poshmark, Mercari, and Depop to broaden the utility of the tool.
