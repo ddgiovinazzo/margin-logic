@@ -20,11 +20,11 @@ interface SourcingFormProps {
 }
 
 const SHIPPING_PRESETS = [
-    { label: "None", value: 0 },
-    { label: "Padded Env ($15.50)", value: 15.5 },
-    { label: "Small Box ($15.15)", value: 15.15 },
-    { label: "Medium Box ($27.80)", value: 27.8 },
-    { label: "Large Box ($40.00)", value: 40.0 },
+    { label: "None / Custom", value: 0 },
+    { label: "Padded Env ($11.99)", value: 11.99 },
+    { label: "Small Box ($12.10)", value: 12.1 },
+    { label: "Medium Box ($21.17)", value: 21.17 },
+    { label: "Large Box ($31.00)", value: 31.0 },
 ];
 
 export function SourcingForm({

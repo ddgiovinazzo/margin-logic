@@ -28,7 +28,7 @@ interface AnalysisState {
 }
 
 const DEFAULT_SETTINGS: PlatformSettings = {
-    taxRate: 8.375, // Rockland County baseline
+    taxRate: 8.375,
     fvfRate: 13.25,
     adRate: 2.0,
     fixedFee: 0.3,
