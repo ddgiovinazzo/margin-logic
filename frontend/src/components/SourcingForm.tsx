@@ -36,6 +36,8 @@ export function SourcingForm({
                     value={marketPrice}
                     onChange={onPriceUpdate}
                     placeholder="e.g. 50.00"
+                    min="0.01"
+                    step="0.01"
                     required
                 />
             </InputWrapper>
@@ -50,6 +52,8 @@ export function SourcingForm({
                         type="number"
                         value={settings.handlingFee}
                         onChange={onSettingsUpdate}
+                        min="0"
+                        step="0.01"
                     />
                 </InputWrapper>
                 <InputWrapper>
@@ -60,6 +64,9 @@ export function SourcingForm({
                         type="number"
                         value={settings.taxRate}
                         onChange={onSettingsUpdate}
+                        min="0"
+                        max="100"
+                        step="0.001"
                     />
                 </InputWrapper>
             </InputRow>
@@ -74,6 +81,9 @@ export function SourcingForm({
                         type="number"
                         value={settings.fvfRate}
                         onChange={onSettingsUpdate}
+                        min="0"
+                        max="100"
+                        step="0.01"
                     />
                 </InputWrapper>
                 <InputWrapper>
@@ -84,6 +94,9 @@ export function SourcingForm({
                         type="number"
                         value={settings.adRate}
                         onChange={onSettingsUpdate}
+                        min="0"
+                        max="100"
+                        step="0.1"
                     />
                 </InputWrapper>
             </InputRow>

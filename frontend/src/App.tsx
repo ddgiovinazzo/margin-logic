@@ -3,7 +3,6 @@ import {
     Container,
     AppHeader,
     Title,
-    ErrorBanner,
     ModalOverlay,
     PrimaryButton,
     GhostButton,
@@ -16,7 +15,6 @@ function App() {
     const {
         settings,
         marketPrice,
-        error,
         analysis,
         isModalOpen,
         closeModal,
@@ -36,8 +34,6 @@ function App() {
                         Reset
                     </GhostButton>
                 </AppHeader>
-
-                {error && <ErrorBanner>{error}</ErrorBanner>}
 
                 <SourcingForm
                     settings={settings}
