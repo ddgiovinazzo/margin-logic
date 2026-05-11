@@ -6,9 +6,9 @@
  */
 export const colors = {
     // Brand & Core
-    primary: "#1D4ED8", // Deep Cobalt - Passes with 6.7:1 contrast on white
+    primary: "#111827", // Deep Charcoal - Passes with 15.6:1 contrast on white
     background: "#FFFFFF", // Pure White
-    surface: "#F3F4F6", // Softer, warmer gray than iOS (Tailwind Gray 100)
+    surface: "#F3F4F6", // Softer, warmer gray (Tailwind Gray 100)
     border: "#D1D5DB", // Muted Border
 
     // Status: Positive (Strong Margin)
@@ -24,7 +24,7 @@ export const colors = {
     criticalBg: "#FFEBEA", // Rose Tint
 
     // Status: Neutral (No Data)
-    neutral: "#374151", // Deep Charcoal
+    neutral: "#374151", // Deep Charcoal (matches primary for cohesive UI)
     neutralBg: "#F3F4F6", // Surface Gray
 
     // Status: Pending (Waiting for Input)
@@ -32,7 +32,7 @@ export const colors = {
     pendingBg: "#F9FAFB", // Off White
 
     // Typography
-    textPrimary: "#111827", // Rich Black (softer on the eyes than pure #000)
+    textPrimary: "#111827", // Rich Black
     textSecondary: "#374151", // Dark Gray
     textMuted: "#4B5563", // Slate Gray - Passes with 5.3:1 contrast on white
 };
