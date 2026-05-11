@@ -86,6 +86,18 @@ export const InputGrid = styled.form`
     flex: 1;
 `;
 
+export const FlexForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+`;
+
+export const ActionFooter = styled.div`
+    margin-top: auto;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem; /* Extra breathing room above the iOS home bar */
+`;
+
 export const InputRow = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);

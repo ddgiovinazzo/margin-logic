@@ -1,5 +1,7 @@
 import React from "react";
 import {
+    ActionFooter,
+    FlexForm,
     Input,
     InputGrid,
     InputRow,
@@ -36,7 +38,7 @@ export function SourcingForm({
     onCalculate,
 }: SourcingFormProps) {
     return (
-        <form onSubmit={onCalculate}>
+        <FlexForm onSubmit={onCalculate}>
             <InputGrid>
                 {/* SECTION 1: Revenue & Logistics */}
                 <SectionLabel>Market & Shipping</SectionLabel>
@@ -64,11 +66,13 @@ export function SourcingForm({
                         onChange={onSettingsUpdate}
                         style={{
                             width: "100%",
-                            padding: "0.8rem",
-                            borderRadius: "8px",
-                            border: "1px solid #CCC",
-                            fontSize: "1rem",
-                            backgroundColor: "#F9FAFB",
+                            padding: "1rem",
+                            borderRadius: "12px",
+                            border: "1px solid #D1D5DB", // Matched to colors.border
+                            fontSize: "1.1rem",
+                            fontWeight: "600",
+                            backgroundColor: "#F3F4F6", // Matched to colors.surface
+                            color: "#111827", // Matched to colors.textPrimary
                         }}
                     >
                         {SHIPPING_PRESETS.map((p) => (
@@ -80,7 +84,7 @@ export function SourcingForm({
                 </InputWrapper>
 
                 {/* SECTION 2: Platform & Government Overhead */}
-                <SectionLabel style={{ marginTop: "1rem" }}>
+                <SectionLabel style={{ marginTop: "0.5rem" }}>
                     Fees & Tax
                 </SectionLabel>
 
@@ -137,7 +141,9 @@ export function SourcingForm({
                 </InputRow>
             </InputGrid>
 
-            <PrimaryButton type="submit">FIND MAX BUY PRICE</PrimaryButton>
-        </form>
+            <ActionFooter>
+                <PrimaryButton type="submit">FIND MAX BUY PRICE</PrimaryButton>
+            </ActionFooter>
+        </FlexForm>
     );
 }
