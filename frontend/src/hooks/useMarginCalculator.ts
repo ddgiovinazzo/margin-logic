@@ -28,8 +28,8 @@ interface AnalysisState {
 }
 
 const DEFAULT_SETTINGS: PlatformSettings = {
-    taxRate: 8.375,
-    fvfRate: 13.25,
+    taxRate: 10,
+    fvfRate: 15,
     adRate: 2.0,
     fixedFee: 0.3,
     shippingRate: 0,
