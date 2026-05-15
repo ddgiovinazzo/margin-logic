@@ -1,6 +1,8 @@
 # MarginLogic 📈
 
-MarginLogic is a mobile-first, reverse-profitability engine designed for eBay resellers. 
+MarginLogic is a mobile-first, reverse-profitability engine designed for eBay resellers.
+
+A live, mobile-first utility app built to automate complex reverse-margin e-commerce calculations. Built with React and TypeScript, using browser Local Storage to guarantee 100% offline functionality and instant calculation speeds.
 
 Built specifically for high-glare, fast-paced field environments (like estate sales and thrift stores), this tool eliminates mental math. Instead of guessing if an item is worth buying, MarginLogic works backward from a target sale price to give you the exact **Maximum Cost of Goods Sold (COGS)** you can pay while guaranteeing your desired profit margin.
 
