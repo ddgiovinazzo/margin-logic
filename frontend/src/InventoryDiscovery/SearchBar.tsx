@@ -1,9 +1,18 @@
 import { SubmitEvent, ChangeEvent, useState } from "react";
+import { PrimaryButton, PrimaryInput } from "../components/CoreUI";
+import styled from "styled-components";
 
 interface SearchBarProps {
     onSearchSubmit: (query: string) => void;
     isLoading: boolean;
 }
+
+const SearchForm = styled.form`
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+    width: 100%;
+`;
 
 export function SearchBar({ onSearchSubmit, isLoading }: SearchBarProps) {
     const [input, setInput] = useState("");
@@ -18,8 +27,8 @@ export function SearchBar({ onSearchSubmit, isLoading }: SearchBarProps) {
     }
 
     return (
-        <form onSubmit={handleFormSubmit}>
-            <input
+        <SearchForm onSubmit={handleFormSubmit}>
+            <PrimaryInput
                 type="text"
                 minLength={2}
                 disabled={isLoading}
@@ -28,7 +37,7 @@ export function SearchBar({ onSearchSubmit, isLoading }: SearchBarProps) {
                 name="SearchQuery"
                 required
             />
-            <button type="submit">Search</button>
-        </form>
+            <PrimaryButton type="submit">Search</PrimaryButton>
+        </SearchForm>
     );
 }

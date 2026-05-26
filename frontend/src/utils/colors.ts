@@ -1,38 +1,24 @@
-/**
- * MARGINLOGIC ACCESSIBLE COLOR PALETTE
- * ========================================
- * - Upgraded for perfect Lighthouse Accessibility scores (> 4.5:1 contrast).
- * - "Fintech Deep Ink" aesthetic for a professional, high-glare field environment.
- */
-export const colors = {
-    // Brand & Core
-    primary: "#111827", // Deep Charcoal - Passes with 15.6:1 contrast on white
-    background: "#FFFFFF", // Pure White
-    surface: "#F3F4F6", // Softer, warmer gray (Tailwind Gray 100)
-    border: "#D1D5DB", // Muted Border
+const DESIGN_PALETTE = {
+    // Core Identity Brands
+    PRIMARY_BRAND: "#007bff", // Vibrant brand blue for primary buttons
+    PRIMARY_FOCUS: "#0056b3", // Deep accent blue for focused inputs/active items
+    PRIMARY_HOVER: "#0069d9", // Slightly darker blue for mouse hover feedback
 
-    // Status: Positive (Strong Margin)
-    positive: "#1B5E20", // Deep Emerald
-    positiveBg: "#E8F5E9", // Mint Tint
+    // Layout Canvas Surfaces
+    CANVAS_BACKGROUND: "#f8f9fa", // Light neutral gray canvas background tint
+    SURFACE_CARD: "#ffffff", // Crisp white background for items, forms, and cards
+    BORDER_NEUTRAL: "#ced4da", // Subtle gray border stroke line outline
 
-    // Status: Warning (Thin Margin)
-    warning: "#855000", // Deep Burnt Orange
-    warningBg: "#FFF3E0", // Peach Tint
+    // Contextual Typography Values
+    TEXT_MAIN: "#212529", // Near-black charcoal color for readable body copy
+    TEXT_MUTED: "#6c757d", // Faded slate gray color for placeholders and secondary metadata
 
-    // Status: Critical (Loss / High Risk)
-    critical: "#C62828", // Deep Crimson
-    criticalBg: "#FFEBEA", // Rose Tint
-
-    // Status: Neutral (No Data)
-    neutral: "#374151", // Deep Charcoal (matches primary for cohesive UI)
-    neutralBg: "#F3F4F6", // Surface Gray
-
-    // Status: Pending (Waiting for Input)
-    pending: "#4B5563", // Slate Gray
-    pendingBg: "#F9FAFB", // Off White
-
-    // Typography
-    textPrimary: "#111827", // Rich Black
-    textSecondary: "#374151", // Dark Gray
-    textMuted: "#4B5563", // Slate Gray - Passes with 5.3:1 contrast on white
+    // Asynchronous State Signaling Callouts
+    SIGNAL_SUCCESS: "#28a745", // Deep forest green for profitable margins/success badges
+    SIGNAL_ERROR_BG: "#fff0f0", // Soft pink wash tint for error callout container backdrops
+    SIGNAL_ERROR_STROKE: "#ffcccc", // Soft salmon border for error cards
+    SIGNAL_ERROR_TEXT: "#c00000", // Deep crimson red for highly legible error message strings
 };
+
+Object.freeze(DESIGN_PALETTE); // Make object strictly immutable so properties cannot be altered at runtime
+export { DESIGN_PALETTE };
