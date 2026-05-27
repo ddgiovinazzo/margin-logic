@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { SearchBar } from "./SearchBar";
+import { ResultsList } from "./ResultsList";
 
-type StatusType = "idle" | "loading" | "success" | "error";
+export type StatusType = "idle" | "loading" | "success" | "error";
 
 export function InventoryDiscovery() {
     const [status, setStatus] = useState<StatusType>("idle");
+    const testResults = ["Result 1", "Result 2", "Result 3"];
 
     function handleSearchSubmit(query: string) {
         setStatus("loading");
@@ -17,6 +19,7 @@ export function InventoryDiscovery() {
                 onSearchSubmit={handleSearchSubmit}
                 isLoading={status === "loading"}
             />
+            <ResultsList status={status} results={testResults} />
         </>
     );
 }
