@@ -31,13 +31,15 @@ export function SearchBar({ onSearchSubmit, isLoading }: SearchBarProps) {
             <PrimaryInput
                 type="text"
                 minLength={2}
-                disabled={isLoading}
                 value={input}
+                disabled={isLoading}
                 onChange={handleInputChange}
                 name="SearchQuery"
                 required
             />
-            <PrimaryButton type="submit">Search</PrimaryButton>
+            <PrimaryButton type="submit" disabled={isLoading}>
+                Search
+            </PrimaryButton>
         </SearchForm>
     );
 }
