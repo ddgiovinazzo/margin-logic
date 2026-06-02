@@ -1,18 +1,20 @@
-import styled, { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle, css } from "styled-components";
 import { DESIGN_PALETTE } from "../utils/colors";
 
 export const GlobalStyle = createGlobalStyle`
-    * {
-        box-sizing: border-box;
-    }
+    ${css`
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: ${DESIGN_PALETTE.CANVAS_BACKGROUND};
-        color: ${DESIGN_PALETTE.TEXT_MAIN};
-    }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: ${DESIGN_PALETTE.CANVAS_BACKGROUND};
+            color: ${DESIGN_PALETTE.TEXT_MAIN};
+        }
+    `}
 `;
 
 export const Container = styled.main`
