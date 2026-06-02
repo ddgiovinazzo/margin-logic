@@ -1,5 +1,5 @@
 import { Container, GlobalStyle } from "./components/CoreUI";
-import { InventoryDiscovery } from "./InventoryDiscovery";
+import { InventoryDiscovery } from "./components/InventoryDiscovery";
 
 function App() {
     return (
