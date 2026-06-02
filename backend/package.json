@@ -1,22 +1,22 @@
 {
-  "name": "margin-logic-backend",
-  "version": "1.0.0",
-  "main": "index.js",
-"scripts": {
-  "build": "sam build",
-  "start": "sam local start-api",
-  "test:local": "tsx src/local-test.ts",
-  "watch": "sam build --watch"
-},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "@types/aws-lambda": "^8.10.161",
-    "@types/node": "^25.6.0",
-    "esbuild": "^0.28.0",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.3"
-  }
+    "name": "margin-logic-backend",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "build": "sam build",
+        "start": "sam local start-api",
+        "test:local": "tsx src/local-test.ts",
+        "watch": "sam build --watch"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "@types/aws-lambda": "8.10.161",
+        "@types/node": "25.6.2",
+        "esbuild": "0.28.0",
+        "tsx": "4.21.0",
+        "typescript": "6.0.3"
+    }
 }

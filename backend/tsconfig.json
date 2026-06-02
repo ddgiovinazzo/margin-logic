@@ -1,16 +1,14 @@
 {
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "composite": true,
-    "types": ["node"], 
-    "rootDir": "src",
-    "paths": {
-      "@shared/*": ["../shared/*"]
-    }
-  },
-  "include": ["src/**/*"],
-  "references": [
-    { "path": "../shared" }
-  ]
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "composite": true,
+        "types": ["node"],
+        "rootDir": "src",
+        "paths": {
+            "@shared/*": ["../shared/*"]
+        }
+    },
+    "include": ["src/**/*"],
+    "references": [{ "path": "../shared" }]
 }

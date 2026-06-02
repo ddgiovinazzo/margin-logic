@@ -1,34 +1,34 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: MarginLogic Default Setup
 
 Globals:
-  Api:
-    Cors:
-      AllowMethods: "'POST,OPTIONS'"
-      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-      AllowOrigin: "'http://localhost:5173'"
+    Api:
+        Cors:
+            AllowMethods: "'POST,OPTIONS'"
+            AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            AllowOrigin: "'http://localhost:5173'"
 
 Resources:
-  MarginLogicFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./
-      Handler: src/app.lambdaHandler
-      Runtime: nodejs20.x
-      Environment:
-        Variables:
-          ALLOWED_ORIGIN: "http://localhost:5173"
-      Events:
-        Calculate:
-          Type: Api
-          Properties:
-            Path: /calculate
-            Method: post
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2020"
-        EntryPoints: 
-          - src/app.ts
+    MarginLogicFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: ./
+            Handler: src/app.lambdaHandler
+            Runtime: nodejs20.x
+            Environment:
+                Variables:
+                    ALLOWED_ORIGIN: "http://localhost:5173"
+            Events:
+                Calculate:
+                    Type: Api
+                    Properties:
+                        Path: /calculate
+                        Method: post
+        Metadata:
+            BuildMethod: esbuild
+            BuildProperties:
+                Minify: true
+                Target: "es2020"
+                EntryPoints:
+                    - src/app.ts

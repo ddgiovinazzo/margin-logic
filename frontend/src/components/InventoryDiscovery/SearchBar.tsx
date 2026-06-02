@@ -1,5 +1,5 @@
 import { SubmitEvent, ChangeEvent, useState } from "react";
-import { PrimaryButton, PrimaryInput } from "../components/CoreUI";
+import { PrimaryButton, PrimaryInput } from "../CoreUI";
 import styled from "styled-components";
 
 interface SearchBarProps {
