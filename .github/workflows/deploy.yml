@@ -1,4 +1,4 @@
-name: Deploy MarginLogic to GitHub Pages
+name: Deploy MarginLogic to GitHub Pages and AWS Lambda
 
 on:
     push:
@@ -18,16 +18,40 @@ concurrency:
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: ./frontend
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@11995564069301285241a5e19d854050b28e402e # v4.2.2
 
+            # --- Backend Deployment (AWS SAM) ---
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d44e06b0d65 # v4.0.2
+              with:
+                  role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+                  aws-region: us-east-1
+
+            - name: Set up AWS SAM CLI
+              uses: aws-actions/setup-sam@f085196ae23491ed2058fa1f45091c53b26c06a3 # v2.0.4
+              with:
+                  use-installer: true
+
+            - name: SAM Build
+              run: sam build
+              working-directory: ./backend
+
+            - name: SAM Deploy
+              run: sam deploy --stack-name margin-logic-backend --resolve-s3 --capabilities CAPABILITY_IAM --no-confirm-changeset --no-fail-on-empty-changeset
+              working-directory: ./backend
+
+            - name: Get API Gateway Base URL
+              id: get-api-url
+              run: |
+                  API_ID=$(aws apigateway get-rest-apis --query "items[?name=='margin-logic-backend'].id" --output text)
+                  echo "VITE_API_URL=https://${API_ID}.execute-api.us-east-1.amazonaws.com/Prod" >> $GITHUB_ENV
+
+            # --- Frontend Deployment (GitHub Pages) ---
             - name: Set up Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@392252cc7a74d19a61d76535285712128b3a11ae # v4.0.4
               with:
                   node-version: 20
                   cache: "npm"
@@ -35,18 +59,22 @@ jobs:
 
             - name: Install dependencies
               run: npm ci
+              working-directory: ./frontend
 
-            - name: Build
+            - name: Build Frontend
               run: npm run build
+              working-directory: ./frontend
+              env:
+                  VITE_API_URL: ${{ env.VITE_API_URL }}
 
             - name: Setup Pages
-              uses: actions/configure-pages@v4
+              uses: actions/configure-pages@f156878fdec7ac1b5259a4f47514a3c61b2a95c3 # v4.0.0
 
             - name: Upload artifact
-              uses: actions/upload-pages-artifact@v3
+              uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda9c69eff1a # v3.0.1
               with:
                   path: "./frontend/dist"
 
             - name: Deploy to GitHub Pages
               id: deployment
-              uses: actions/deploy-pages@v4
+              uses: actions/deploy-pages@d6db90164db5e196290240928f52a778000954b3 # v4.0.5
