@@ -10,10 +10,12 @@ export const lambdaHandler = async (
     };
 
     if (event.resource === "/search" && event.httpMethod === "GET") {
-        const query = (event.queryStringParameters?.query ?? "").trim().toLowerCase();
+        const query = (event.queryStringParameters?.query ?? "")
+            .trim()
+            .toLowerCase();
         const testResults = ["Result 1", "Result 2", "Result 3"];
         const filteredResults = testResults.filter((result) =>
-            result.toLowerCase().includes(query)
+            result.toLowerCase().includes(query),
         );
         return {
             statusCode: 200,

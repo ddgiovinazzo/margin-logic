@@ -1,70 +1,89 @@
 # MarginLogic 📈
 
-MarginLogic is a mobile-first, reverse-profitability engine designed for eBay resellers.
+MarginLogic is a mobile-first, serverless-backed Inventory Discovery application designed for eBay resellers.
 
-Built specifically for high-glare, fast-paced field environments (like estate sales and thrift stores), this tool eliminates mental math. Instead of guessing if an item is worth buying, MarginLogic works backward from a target sale price to give you the exact **Maximum Cost of Goods Sold (COGS)** you can pay while guaranteeing your desired profit margin.
+Built specifically for fast-paced field environments (like estate sales and thrift stores), this tool allows resellers to query and discover inventory items in real-time.
+
+---
 
 ## ✨ Features
 
-- **Reverse Margin Ladder:** Instantly calculates your maximum buy price across four tiers: Excellent (30%), Healthy (20%), Standard (10%), and Break-Even (0%).
-- **Loss Prevention:** Automatically detects unprofitable items where fees and shipping outweigh revenue, displaying a high-contrast "DO NOT BUY" hero alert.
-- **USPS Commercial Pricing Integration:** Pre-loaded with accurate May 2026 USPS Commercial rates (e.g., Padded Envelope $11.99, Medium Box $21.17) to reflect actual platform logistics costs.
-- **"Tax on Tax" Accuracy:** Accurately calculates eBay Final Value Fees based on the total transaction amount, including the buyer's localized sales tax.
-- **Field-Ready UI:** Achieves a **100/100 Lighthouse Score** across Performance, Accessibility, Best Practices, and SEO. Uses a custom "Deep Charcoal" palette strictly adhering to WCAG AA contrast standards (> 4.5:1) for maximum readability in direct sunlight.
-- **Persistent Settings:** Uses `localStorage` to save your baseline tax rates, ad rates, and fee structures so the app is instantly ready the moment it's opened.
+- **Inventory Discovery:** Instantly search and retrieve inventory listings.
+- **Serverless API Proxy:** Integrated with an AWS Lambda backend for fast, real-time query results.
+- **Field-Ready UI:** Achieves a **100/100 Lighthouse Score** across Performance, Accessibility, Best Practices, and SEO. Uses a clean, high-contrast palette for maximum readability.
 
-## 🧮 The Math Engine
-
-MarginLogic doesn't just subtract standard fees; it acts as a reverse-profitability calculator. Because certain costs (like eBay Final Value Fees) scale with the final sale price, while other costs (like risk buffers) scale with your initial buy price, calculating the exact COGS limit requires algebraic isolation.
-
-### The Handling Formula
-
-To ensure profitability across both low-tier and high-tier items, the app applies a dynamic handling buffer rather than a static cost:
-
-- **Baseline:** $1.50 (covers standard tape, boxes, and thermal labels).
-- **Risk Scale:** 1% of the item's purchase cost (covers increased void fill, heavy-duty boxes, and insurance on expensive items).
-
-### Algebraic Isolation
-
-To find the absolute maximum you can pay for an item ($C$) while guaranteeing a specific target profit margin, the app reverses the traditional margin formula using the following logic:
-
-$$C = \frac{P \times (1 - \text{FeeLoad}) - S - 1.50 - \text{FF} - \text{TargetProfit}}{1.01}$$
-
-**Where:**
-
-- $P$ = Target Sale Price (Market Value)
-- $\text{FeeLoad}$ = eBay FVF + Ad Rate + "Tax on Tax" Overhead
-- $S$ = USPS Commercial Shipping Rate
-- $\text{FF}$ = eBay Fixed Transaction Fee ($0.30)
-- $1.01$ = The divisor that isolates the 1% dynamic risk scale.
+---
 
 ## 🛠 Tech Stack
 
-- **Core:** React, TypeScript, Vite
-- **Styling:** Styled-Components (Custom Mobile-First Component Library)
-- **State Management:** React Hooks (`useState`, custom `useLocalStorage`)
+### Frontend
+
+- **Framework:** React 19, TypeScript, Vite
+- **Styling:** Styled-Components
+
+### Backend (API)
+
+- **Serverless Engine:** AWS SAM (Serverless Application Model)
+- **Functions:** AWS Lambda (Node.js 20.x, TypeScript)
+- **Routing & CORS:** Amazon API Gateway (REST API)
+
+---
 
 ## 🚀 Getting Started
 
-To run this project locally:
+### 1. Install Dependencies
 
-1. **Clone the repository:**
-    ```bash
-    git clone [https://github.com/yourusername/marginlogic.git](https://github.com/yourusername/marginlogic.git)
-    ```
-2. **Navigate to the project directory:**
-    ```bash
-    cd marginlogic
-    ```
-3. **Install dependencies:**
-    ```bash
-    npm install
-    ```
-4. **Start the development server:**
-    ```bash
-    npm run dev
-    ```
+From the root workspace folder, install all required dependencies:
+
+```bash
+npm install
+```
+
+### 2. Configure Environment Variables
+
+Copy the environment template in the `frontend` folder:
+
+```bash
+cp frontend/.env.example frontend/.env
+```
+
+Open `frontend/.env` and update `VITE_API_URL` to point to your live backend endpoint. (Note: `.env` is git-ignored to prevent exposing production URLs).
+
+### 3. Spin Up Frontend Development Server
+
+Start the Vite dev server locally:
+
+```bash
+npm run dev
+```
+
+---
+
+## 🔌 API & Local Development
+
+We provide root-level helper script shortcuts to build, test, and run the backend API locally from the workspace root:
+
+| Command                         | Action                                                                                | Runtime Requirements        |
+| :------------------------------ | :------------------------------------------------------------------------------------ | :-------------------------- |
+| `npm run backend:build`         | Compiles the Lambda functions using esbuild.                                          | Node.js                     |
+| `npm run backend:test:local`    | Runs offline test cases checking search filter, CORS headers, and case insensitivity. | Node.js / tsx               |
+| `npm run backend:start:docker`  | Launches a local mock API Gateway on `http://localhost:3000`.                         | AWS SAM CLI + Docker Daemon |
+| `npm run backend:invoke:docker` | Invokes the Lambda function directly using a mock event payload.                      | AWS SAM CLI + Docker Daemon |
+| `npm run lint`                  | Runs ESLint across both frontend and backend directories.                             | Node.js                     |
+| `npm run format`                | Standardizes formatting across the workspace using Prettier.                          | Node.js                     |
+
+### Deployment
+
+To deploy changes to the live AWS environment:
+
+```bash
+cd backend
+sam build
+sam deploy --stack-name margin-logic-backend --resolve-s3 --capabilities CAPABILITY_IAM --no-confirm-changeset
+```
+
+---
 
 ## 📝 Disclaimer
 
-_All calculations provided by MarginLogic are approximate estimates based on user-provided variables. Actual profit or loss is subject to dynamic marketplace conditions, exact buyer locations (sales tax variance), and final shipping dimensions/weights. Profit is not guaranteed._
+_All data provided by MarginLogic are approximate estimates. Actual marketplace results are subject to dynamic conditions. Profit is not guaranteed._

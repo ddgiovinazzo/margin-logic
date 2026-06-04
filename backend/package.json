@@ -4,6 +4,7 @@
     "main": "index.js",
     "scripts": {
         "build": "sam build",
+        "invoke:docker": "sam local invoke MarginLogicFunction -e events/search-event.json",
         "start": "sam local start-api",
         "test:local": "tsx src/local-test.ts",
         "watch": "sam build --watch"

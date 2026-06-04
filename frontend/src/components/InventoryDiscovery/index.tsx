@@ -12,11 +12,14 @@ export function InventoryDiscovery() {
         const trimmedQuery = query.trim();
         if (!trimmedQuery) return;
         setStatus("loading");
-        console.info("Routing search payload to AWS Lambda proxy node:", trimmedQuery);
+        console.info(
+            "Routing search payload to AWS Lambda proxy node:",
+            trimmedQuery,
+        );
 
         const apiBase =
             import.meta.env.VITE_API_URL ||
-            (import.meta.env.DEV ? "http://localhost:3000" : "https://api.marginlogic.com");
+            (import.meta.env.DEV ? "http://localhost:3000" : "");
 
         try {
             const url = `${apiBase}/search?query=${encodeURIComponent(trimmedQuery)}`;

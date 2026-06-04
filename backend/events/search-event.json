@@ -1,0 +1,45 @@
+{
+    "resource": "/search",
+    "path": "/search",
+    "httpMethod": "GET",
+    "queryStringParameters": {
+        "query": "result"
+    },
+    "multiValueQueryStringParameters": {
+        "query": ["result"]
+    },
+    "pathParameters": null,
+    "stageVariables": null,
+    "requestContext": {
+        "resourceId": "123456",
+        "resourcePath": "/search",
+        "httpMethod": "GET",
+        "extendedRequestId": "extended-id",
+        "requestTime": "04/Jun/2026:05:00:00 +0000",
+        "path": "/search",
+        "accountId": "123456789012",
+        "protocol": "HTTP/1.1",
+        "stage": "Prod",
+        "domainPrefix": "testPrefix",
+        "requestTimeEpoch": 1780549200000,
+        "requestId": "request-id",
+        "identity": {
+            "cognitoIdentityPoolId": null,
+            "accountId": null,
+            "cognitoIdentityId": null,
+            "caller": null,
+            "sourceIp": "127.0.0.1",
+            "principalOrgId": null,
+            "accessKey": null,
+            "cognitoAuthenticationType": null,
+            "cognitoAuthenticationProvider": null,
+            "userArn": null,
+            "userAgent": "Custom User Agent",
+            "user": null
+        },
+        "domainName": "test.execute-api.us-east-1.amazonaws.com",
+        "apiId": "ey3k34iqxf"
+    },
+    "body": null,
+    "isBase64Encoded": false
+}

@@ -6,7 +6,11 @@ node_modules/
 dist/
 **/dist/
 .aws-sam/
+**/.aws-sam/
 .esbuild/
+**/.esbuild/
+*.tsbuildinfo
+**/*.tsbuildinfo
 
 # --- Logs & System ---
 *.log
@@ -16,6 +20,7 @@ yarn-error.log*
 .DS_Store
 .env
 .env.local
+.env*.local
 
 # --- Editor ---
 # We keep .vscode/settings.json but ignore user-specific workspace data
