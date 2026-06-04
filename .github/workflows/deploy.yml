@@ -21,17 +21,17 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+              uses: actions/checkout@v4
 
             # --- Backend Deployment (AWS SAM) ---
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+              uses: aws-actions/configure-aws-credentials@v4
               with:
                   role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
                   aws-region: us-east-1
 
             - name: Set up AWS SAM CLI
-              uses: aws-actions/setup-sam@f84ec7d548307efafe33230528756de3c5841a17 # v2
+              uses: aws-actions/setup-sam@v2
               with:
                   use-installer: true
 
@@ -51,7 +51,7 @@ jobs:
 
             # --- Frontend Deployment (GitHub Pages) ---
             - name: Set up Node.js
-              uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6 # v4.0.4
+              uses: actions/setup-node@v4
               with:
                   node-version: 20
                   cache: "npm"
@@ -68,13 +68,13 @@ jobs:
                   VITE_API_URL: ${{ env.VITE_API_URL }}
 
             - name: Setup Pages
-              uses: actions/configure-pages@1f0c5cde4bc74cd7e1254d0cb4de8d49e9068c7d # v4.0.0
+              uses: actions/configure-pages@v4
 
             - name: Upload artifact
-              uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda9c69eff1a # v3.0.1
+              uses: actions/upload-pages-artifact@v3
               with:
                   path: "./frontend/dist"
 
             - name: Deploy to GitHub Pages
               id: deployment
-              uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+              uses: actions/deploy-pages@v4
