@@ -37,6 +37,10 @@ jobs:
               with:
                   use-installer: true
 
+            # NEW STEP: Elevate the compiler to the global runner PATH
+            - name: Install Global Compilers
+              run: npm install -g esbuild typescript
+
             - name: Install backend dependencies
               run: npm ci
               working-directory: ./backend
