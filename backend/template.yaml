@@ -7,7 +7,7 @@ Globals:
         Cors:
             AllowMethods: "'GET,POST,OPTIONS'"
             AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-            AllowOrigin: "'http://localhost:5173'"
+            AllowOrigin: "'*'"
 
 Resources:
     MarginLogicFunction:
@@ -18,7 +18,7 @@ Resources:
             Runtime: nodejs20.x
             Environment:
                 Variables:
-                    ALLOWED_ORIGIN: "http://localhost:5173"
+                    ALLOWED_ORIGIN: "*"
             Events:
                 Search:
                     Type: Api
