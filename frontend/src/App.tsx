@@ -1,4 +1,5 @@
 import { Container, GlobalStyle } from "./components/CoreUI";
+import { Header } from "./components/Header";
 import { InventoryDiscovery } from "./components/InventoryDiscovery";
 
 function App() {
@@ -6,6 +7,7 @@ function App() {
         <>
             <GlobalStyle />
             <Container>
+                <Header />
                 <InventoryDiscovery />
             </Container>
         </>
