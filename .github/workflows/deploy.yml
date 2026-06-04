@@ -37,6 +37,10 @@ jobs:
               with:
                   use-installer: true
 
+            - name: Install backend dependencies
+              run: npm ci
+              working-directory: ./backend
+
             - name: SAM Build
               run: sam build
               working-directory: ./backend
