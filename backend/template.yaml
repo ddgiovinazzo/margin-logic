@@ -7,6 +7,8 @@ Globals:
         Cors:
             AllowMethods: "'GET,POST,OPTIONS'"
             AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            # Allow API Gateway to approve all preflight OPTIONS handshakes.
+            # Security is delegated downstream to the Lambda's data response.
             AllowOrigin: "'*'"
 
 Resources:
@@ -18,7 +20,8 @@ Resources:
             Runtime: nodejs20.x
             Environment:
                 Variables:
-                    ALLOWED_ORIGIN: "*"
+                    # Comma-separated whitelist for Dynamic Origin Reflection
+                    ALLOWED_ORIGIN: "http://localhost:5173,https://ddgiovinazzo.github.io"
             Events:
                 Search:
                     Type: Api
