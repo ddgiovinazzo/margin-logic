@@ -5,7 +5,7 @@ Description: MarginLogic Default Setup
 Globals:
     Api:
         Cors:
-            AllowMethods: "'POST,OPTIONS'"
+            AllowMethods: "'GET,POST,OPTIONS'"
             AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
             AllowOrigin: "'http://localhost:5173'"
 
@@ -20,11 +20,11 @@ Resources:
                 Variables:
                     ALLOWED_ORIGIN: "http://localhost:5173"
             Events:
-                Calculate:
+                Search:
                     Type: Api
                     Properties:
-                        Path: /calculate
-                        Method: post
+                        Path: /search
+                        Method: get
         Metadata:
             BuildMethod: esbuild
             BuildProperties:
