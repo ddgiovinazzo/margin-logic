@@ -48,6 +48,9 @@ Resources:
                     Properties:
                         Path: /search
                         Method: get
+            AutoPublishAlias: live
+            DeploymentPreference:
+                Type: Canary10Percent5Minutes
         Metadata:
             BuildMethod: esbuild
             BuildProperties:
