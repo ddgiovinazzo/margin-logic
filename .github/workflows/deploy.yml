@@ -1,3 +1,17 @@
+# ============================================================================
+# GITHUB ACTIONS SECURITY & MAINTENANCE INSTRUCTIONS FOR AI AGENTS:
+# 1. ACTION PINNING: Pin all external actions to a full 40-character commit SHA
+#    (never use mutable tags like @v4 or @main directly).
+# 2. VERSION COMMENTS: Always append the version tag as a trailing comment
+#    on the same line (e.g., uses: actions/checkout@<SHA> # v4.2.2).
+#    This allows Dependabot to track versions and auto-update the SHAs.
+# 3. NO DUMMY SHAS: Ensure every SHA is a valid, existing commit hash in that
+#    action's repository. Do not guess, truncate, or mix parts of different SHAs.
+# 4. VS CODE FALSE-POSITIVES: Local IDE diagnostics stating "Unable to resolve
+#    action... repository or version not found" are false-positives when using
+#    valid commit SHAs. Do NOT revert back to version tags to fix these editor warnings.
+# ============================================================================
+
 name: CI/CD Pipeline - Verify & Deploy
 
 on:
@@ -10,6 +24,9 @@ on:
 concurrency:
     group: "pages"
     cancel-in-progress: true
+
+env:
+    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
     verify:
@@ -42,8 +59,11 @@ jobs:
             - name: Run Linter
               run: npm run lint
 
-            - name: Typecheck & Build Sanity Check
-              run: node node_modules/typescript/bin/tsc --build
+            - name: Typecheck Backend
+              run: npx --prefix backend tsc --build
+
+            - name: Typecheck Frontend
+              run: npx --prefix frontend tsc --build
 
             - name: Run Backend Tests
               run: npm test
@@ -60,7 +80,7 @@ jobs:
                   fetch-depth: 0
 
             - name: GitLeaks Scan
-              uses: gitleaks/gitleaks-action@f586c14336262529367858c49cc8b7f8f05e328e # v2.3.8
+              uses: gitleaks/gitleaks-action@c8c586e379058b738e4a778c187f4c0228d7122b # v3.0.0
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -73,9 +93,6 @@ jobs:
             contents: read
             pages: write
             id-token: write
-        env:
-            FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
         steps:
             - name: Checkout
               uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v4.2.2
