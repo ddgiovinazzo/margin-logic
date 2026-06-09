@@ -89,11 +89,13 @@ sam deploy --stack-name margin-logic-backend --resolve-s3 --capabilities CAPABIL
 To ensure codebase quality and security, all AI agents and developers must adhere to the following rules:
 
 ### 1. UI & Styling Patterns
+
 - **Reusable Styled Components**: Maintain and reuse the project-level components defined in [CoreUI.tsx](file:///Users/daniel/code/margin-logic/frontend/src/components/CoreUI.tsx). Do not create redundant cards, badges, headings, or buttons.
 - **Extension Pattern**: For custom UI components, extend base components (e.g., `styled(BaseCard)`) instead of styling from scratch.
 - **Colors**: Always use tokens from `DESIGN_PALETTE` in `colors.ts`.
 
 ### 2. CI/CD & GitHub Actions Security
+
 - **Commit SHA Pinning**: All external actions in [.github/workflows/deploy.yml](file:///Users/daniel/code/margin-logic/.github/workflows/deploy.yml) must be pinned to a full 40-character commit SHA rather than mutable version tags (like `@v4` or `@main`).
 - **Trailing Version Comments**: Always append the version tag as a comment on the same line (e.g., `uses: actions/checkout@<SHA> # v4.2.2`). This is required by Dependabot to verify and automate updates.
 - **Valid Hashes Only**: Do not invent, truncate, or mix parts of commit SHAs. Every SHA must exist in that action's official repository.

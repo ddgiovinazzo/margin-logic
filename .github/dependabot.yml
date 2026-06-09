@@ -1,25 +1,25 @@
 version: 2
 updates:
-  # Maintain GitHub Actions dependencies (keeps pinned SHAs updated)
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
+    # Maintain GitHub Actions dependencies (keeps pinned SHAs updated)
+    - package-ecosystem: "github-actions"
+      directory: "/"
+      schedule:
+          interval: "weekly"
 
-  # Maintain root package.json dependencies
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
+    # Maintain root package.json dependencies
+    - package-ecosystem: "npm"
+      directory: "/"
+      schedule:
+          interval: "weekly"
 
-  # Maintain backend package.json dependencies
-  - package-ecosystem: "npm"
-    directory: "/backend"
-    schedule:
-      interval: "weekly"
+    # Maintain backend package.json dependencies
+    - package-ecosystem: "npm"
+      directory: "/backend"
+      schedule:
+          interval: "weekly"
 
-  # Maintain frontend package.json dependencies
-  - package-ecosystem: "npm"
-    directory: "/frontend"
-    schedule:
-      interval: "weekly"
+    # Maintain frontend package.json dependencies
+    - package-ecosystem: "npm"
+      directory: "/frontend"
+      schedule:
+          interval: "weekly"
