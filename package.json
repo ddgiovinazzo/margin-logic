@@ -12,7 +12,8 @@
         "lint:fix": "eslint . --fix",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
-        "validate": "npm run format && npm run lint"
+        "validate": "npm run format && npm run lint",
+        "pin-actions": "pin-github-action .github/workflows/deploy.yml"
     },
     "devDependencies": {
         "@eslint/js": "10.0.1",
@@ -22,6 +23,7 @@
         "eslint-config-prettier": "10.1.8",
         "globals": "17.6.0",
         "prettier": "3.8.3",
-        "typescript-eslint": "8.59.2"
+        "typescript-eslint": "8.59.2",
+        "pin-github-action": "^1.18.0"
     }
 }
