@@ -22,7 +22,7 @@
         "format:check": "prettier --check .",
         "validate": "npm run format && npm run lint",
         "pin-actions": "pin-github-action .github/workflows/deploy.yml",
-        "prepare": "husky"
+        "prepare": "node -e \"if (process.env.CI !== 'true') { try { require('child_process').execSync('npx husky', {stdio: 'inherit'}); } catch (e) { process.exit(0); } }\""
     },
     "devDependencies": {
         "@eslint/js": "10.0.1",
