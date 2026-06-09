@@ -47,6 +47,11 @@ jobs:
             - name: Install root dependencies
               run: npm ci
 
+            - name: Verify GitHub Action SHAs are pinned
+              run: |
+                  npm run pin-actions
+                  git diff --exit-code .github/workflows/
+
             - name: Install backend dependencies
               run: npm ci --prefix backend
 

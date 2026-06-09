@@ -13,7 +13,8 @@
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "validate": "npm run format && npm run lint",
-        "pin-actions": "pin-github-action .github/workflows/deploy.yml"
+        "pin-actions": "pin-github-action .github/workflows/deploy.yml",
+        "prepare": "husky"
     },
     "devDependencies": {
         "@eslint/js": "10.0.1",
@@ -24,6 +25,21 @@
         "globals": "17.6.0",
         "prettier": "3.8.3",
         "typescript-eslint": "8.59.2",
-        "pin-github-action": "^3.4.0"
+        "pin-github-action": "^3.4.0",
+        "lint-staged": "^15.2.0",
+        "husky": "^9.0.0"
+    },
+    "lint-staged": {
+        ".github/workflows/*.{yml,yaml}": [
+            "pin-github-action"
+        ],
+        "backend/**/*.{js,ts}": [
+            "npm run lint --prefix backend -- --fix",
+            "npm run format --prefix backend"
+        ],
+        "frontend/**/*.{js,jsx,ts,tsx}": [
+            "npm run lint --prefix frontend -- --fix",
+            "npm run format --prefix frontend"
+        ]
     }
 }
