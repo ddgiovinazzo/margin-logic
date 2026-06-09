@@ -1,12 +1,26 @@
 import { useState } from "react";
 import { SearchBar } from "./SearchBar";
 import { ResultsList } from "./ResultsList";
+import { CalculatorModal } from "./CalculatorModal";
+import { useMarginCalculator } from "../../hooks/useMarginCalculator";
+import type { SearchItem } from "@shared/types";
 
 export type StatusType = "idle" | "loading" | "success" | "error";
 
 export function InventoryDiscovery() {
     const [status, setStatus] = useState<StatusType>("idle");
-    const [results, setResults] = useState<string[]>([]);
+    const [results, setResults] = useState<SearchItem[]>([]);
+    const [selectedItem, setSelectedItem] = useState<SearchItem | null>(null);
+
+    const {
+        settings,
+        marketPrice,
+        analysis,
+        isModalOpen,
+        calculatePrice,
+        handleSettingsUpdate,
+        closeModal,
+    } = useMarginCalculator();
 
     async function handleSearchSubmit(query: string) {
         const trimmedQuery = query.trim();
@@ -29,7 +43,7 @@ export function InventoryDiscovery() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const data = (await response.json()) as { results?: string[] };
+            const data = (await response.json()) as { results?: SearchItem[] };
             setResults(data.results || []);
             setStatus("success");
         } catch (error) {
@@ -39,13 +53,36 @@ export function InventoryDiscovery() {
         }
     }
 
+    const handleItemClick = (item: SearchItem) => {
+        setSelectedItem(item);
+        calculatePrice(parseFloat(item.price));
+    };
+
     return (
         <>
             <SearchBar
                 onSearchSubmit={handleSearchSubmit}
                 isLoading={status === "loading"}
             />
-            <ResultsList status={status} results={results} />
+            <ResultsList
+                status={status}
+                results={results}
+                onItemSelect={handleItemClick}
+            />
+            {selectedItem && (
+                <CalculatorModal
+                    isOpen={isModalOpen}
+                    onClose={closeModal}
+                    title={selectedItem.title}
+                    marketPrice={
+                        Number(marketPrice) || parseFloat(selectedItem.price)
+                    }
+                    settings={settings}
+                    analysis={analysis}
+                    onSettingsUpdate={handleSettingsUpdate}
+                    onRecalculate={calculatePrice}
+                />
+            )}
         </>
     );
 }

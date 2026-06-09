@@ -2,6 +2,23 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: MarginLogic Default Setup
 
+Parameters:
+    EbayClientId:
+        Type: String
+        Description: "eBay Application Client ID"
+        Default: ""
+    EbayClientSecret:
+        Type: String
+        Description: "eBay Application Client Secret ID (Cert ID)"
+        Default: ""
+    EbayEnvironment:
+        Type: String
+        Description: "eBay API environment (sandbox or production)"
+        Default: "sandbox"
+        AllowedValues:
+            - sandbox
+            - production
+
 Globals:
     Api:
         Cors:
@@ -22,6 +39,9 @@ Resources:
                 Variables:
                     # Comma-separated whitelist for Dynamic Origin Reflection
                     ALLOWED_ORIGIN: "http://localhost:5173,https://ddgiovinazzo.github.io"
+                    EBAY_CLIENT_ID: !Ref EbayClientId
+                    EBAY_CLIENT_SECRET: !Ref EbayClientSecret
+                    EBAY_ENVIRONMENT: !Ref EbayEnvironment
             Events:
                 Search:
                     Type: Api

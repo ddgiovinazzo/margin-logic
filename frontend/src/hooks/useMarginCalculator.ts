@@ -56,11 +56,9 @@ export function useMarginCalculator() {
         label: "Enter Market Price",
     });
 
-    const handleCalculate = (e: React.SyntheticEvent) => {
-        e.preventDefault();
-
-        const P = Number(marketPrice);
-        if (P <= 0) return;
+    const calculatePrice = (price: number) => {
+        const P = Number(price);
+        if (P <= 0 || isNaN(P)) return;
 
         // --- INTERNAL MATH ENGINE ---
         const F = Number(settings.fvfRate) / 100;
@@ -87,7 +85,7 @@ export function useMarginCalculator() {
             const maxBuy = netAfterFixedHandling / 1.01;
 
             return {
-                maxBuy: maxBuy,
+                maxBuy: Math.max(0, maxBuy),
                 profit: profitDollars,
             };
         };
@@ -102,7 +100,13 @@ export function useMarginCalculator() {
             label: `Analysis for $${P.toFixed(2)} Target`,
         });
 
+        setMarketPrice(P);
         setIsModalOpen(true);
+    };
+
+    const handleCalculate = (e: React.SyntheticEvent) => {
+        e.preventDefault();
+        calculatePrice(Number(marketPrice));
     };
 
     const handleSettingsUpdate = (
@@ -132,6 +136,7 @@ export function useMarginCalculator() {
         error,
         analysis,
         isModalOpen,
+        calculatePrice,
         handleSettingsUpdate,
         handlePriceUpdate,
         handleCalculate,

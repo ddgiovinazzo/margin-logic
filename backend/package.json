@@ -4,8 +4,8 @@
     "main": "index.js",
     "scripts": {
         "build": "sam build",
-        "invoke:docker": "sam local invoke MarginLogicFunction -e events/search-event.json",
-        "start": "sam local start-api",
+        "invoke:docker": "if [ -f env.json ]; then sam local invoke MarginLogicFunction -e events/search-event.json --env-vars env.json; else sam local invoke MarginLogicFunction -e events/search-event.json; fi",
+        "start": "if [ -f env.json ]; then sam local start-api --env-vars env.json; else sam local start-api; fi",
         "test:local": "tsx src/local-test.ts",
         "watch": "sam build --watch"
     },

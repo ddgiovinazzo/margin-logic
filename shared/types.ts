@@ -6,3 +6,17 @@ export interface CalculationInputs {
     adRate: number;
     taxRate: number;
 }
+
+export interface SearchItem {
+    itemId: string;
+    title: string;
+    price: string;
+    currency: string;
+    image?: string;
+    itemWebUrl?: string;
+    condition?: string;
+}
+
+export interface SearchResponse {
+    results: SearchItem[];
+}

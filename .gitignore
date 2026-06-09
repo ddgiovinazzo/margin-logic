@@ -34,3 +34,9 @@ yarn-error.log*
 knip.json
 changes.txt
 tree.txt
+
+# --- SAM local env ---
+**/env.json
+
+# -- Agents --
+.agents/**

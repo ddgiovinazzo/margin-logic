@@ -18,10 +18,10 @@ async function runTests() {
         isBase64Encoded: false,
     });
 
-    // Test case 1: Query matching "Result 1" (case-insensitive "result")
-    console.log("Test Case 1: Query for 'result' (expecting all 3 results)...");
+    // Test case 1: Query matching "leather" (expecting 2 results)
+    console.log("Test Case 1: Query for 'leather' (expecting 2 results)...");
     const result1 = await lambdaHandler(
-        mockEvent("result") as APIGatewayProxyEvent,
+        mockEvent("leather") as APIGatewayProxyEvent,
     );
     console.log("Status Code:", result1.statusCode);
     console.log("Response Body:", result1.body);
@@ -29,15 +29,17 @@ async function runTests() {
     if (
         result1.statusCode !== 200 ||
         !body1.results ||
-        body1.results.length !== 3
+        body1.results.length !== 2
     ) {
         throw new Error("Test Case 1 Failed!");
     }
     console.log("Test Case 1 Passed.\n");
 
-    // Test case 2: Query matching "Result 2" (case-insensitive "2")
-    console.log("Test Case 2: Query for '2' (expecting Result 2)...");
-    const result2 = await lambdaHandler(mockEvent("2") as APIGatewayProxyEvent);
+    // Test case 2: Query matching "iphone" (expecting 1 result)
+    console.log("Test Case 2: Query for 'iphone' (expecting 1 result)...");
+    const result2 = await lambdaHandler(
+        mockEvent("iphone") as APIGatewayProxyEvent,
+    );
     console.log("Status Code:", result2.statusCode);
     console.log("Response Body:", result2.body);
     const body2 = JSON.parse(result2.body);
@@ -45,14 +47,16 @@ async function runTests() {
         result2.statusCode !== 200 ||
         !body2.results ||
         body2.results.length !== 1 ||
-        body2.results[0] !== "Result 2"
+        body2.results[0].itemId !== "mock-2"
     ) {
         throw new Error("Test Case 2 Failed!");
     }
     console.log("Test Case 2 Passed.\n");
 
-    // Test case 3: Query with no matches
-    console.log("Test Case 3: Query for 'xyz' (expecting 0 results)...");
+    // Test case 3: Query for 'xyz' (expecting dynamic mock product fallback)
+    console.log(
+        "Test Case 3: Query for 'xyz' (expecting 1 dynamic fallback result)...",
+    );
     const result3 = await lambdaHandler(
         mockEvent("xyz") as APIGatewayProxyEvent,
     );
@@ -62,7 +66,8 @@ async function runTests() {
     if (
         result3.statusCode !== 200 ||
         !body3.results ||
-        body3.results.length !== 0
+        body3.results.length !== 1 ||
+        body3.results[0].itemId !== "dynamic-mock"
     ) {
         throw new Error("Test Case 3 Failed!");
     }
