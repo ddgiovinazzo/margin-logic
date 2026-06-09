@@ -7,11 +7,6 @@ on:
         branches: ["main"]
     workflow_dispatch:
 
-permissions:
-    contents: read
-    pages: write
-    id-token: write
-
 concurrency:
     group: "pages"
     cancel-in-progress: true
@@ -20,12 +15,14 @@ jobs:
     verify:
         name: Code Verification & Testing
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v4.2.2
 
             - name: Set up Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@1d0ff469b7ec7b389d8919623e1f59235e807185 # v4.2.0
               with:
                   node-version: 20
                   cache: "npm"
@@ -54,14 +51,16 @@ jobs:
     security-scan:
         name: Secret Security Scanning
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v4.2.2
               with:
                   fetch-depth: 0
 
             - name: GitLeaks Scan
-              uses: gitleaks/gitleaks-action@v2
+              uses: gitleaks/gitleaks-action@f586c14336262529367858c49cc8b7f8f05e328e # v2.3.8
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -70,22 +69,26 @@ jobs:
         runs-on: ubuntu-latest
         needs: [verify, security-scan]
         if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        permissions:
+            contents: read
+            pages: write
+            id-token: write
         env:
             FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v4.2.2
 
             # --- Backend Deployment (AWS SAM) ---
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v4
+              uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e03a3d0b # v4.0.2
               with:
                   role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
                   aws-region: us-east-1
 
             - name: Set up AWS SAM CLI
-              uses: aws-actions/setup-sam@v2
+              uses: aws-actions/setup-sam@89ddb14d241773c21c7b80a6b5774a3f12443657 # v3.0.0
               with:
                   use-installer: true
 
@@ -112,7 +115,7 @@ jobs:
 
             # --- Frontend Deployment (GitHub Pages) ---
             - name: Set up Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@1d0ff469b7ec7b389d8919623e1f59235e807185 # v4.2.0
               with:
                   node-version: 20
                   cache: "npm"
@@ -129,13 +132,13 @@ jobs:
                   VITE_API_URL: ${{ env.VITE_API_URL }}
 
             - name: Setup Pages
-              uses: actions/configure-pages@v4
+              uses: actions/configure-pages@983d77366d740c061614777c5952f4a470123516 # v5.0.0
 
             - name: Upload artifact
-              uses: actions/upload-pages-artifact@v3
+              uses: actions/upload-pages-artifact@05a6b0c26571597f7614e5a9735d4755d5b780b1 # v3.0.1
               with:
                   path: "./frontend/dist"
 
             - name: Deploy to GitHub Pages
               id: deployment
-              uses: actions/deploy-pages@v4
+              uses: actions/deploy-pages@d6db9011e03259e8633c37346ef27976e5d22d36 # v4.0.5
