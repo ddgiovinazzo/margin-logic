@@ -1,9 +1,10 @@
-name: Deploy MarginLogic to GitHub Pages and AWS Lambda
+name: CI/CD Pipeline - Verify & Deploy
 
 on:
     push:
+        branches: ["**"]
+    pull_request:
         branches: ["main"]
-
     workflow_dispatch:
 
 permissions:
@@ -16,8 +17,59 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    build-and-deploy:
+    verify:
+        name: Code Verification & Testing
         runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: "npm"
+
+            - name: Install root dependencies
+              run: npm ci
+
+            - name: Install backend dependencies
+              run: npm ci --prefix backend
+
+            - name: Install frontend dependencies
+              run: npm ci --prefix frontend
+
+            - name: Check Formatting
+              run: npm run format:check
+
+            - name: Run Linter
+              run: npm run lint
+
+            - name: Typecheck & Build Sanity Check
+              run: node node_modules/typescript/bin/tsc --build
+
+            - name: Run Backend Tests
+              run: npm test
+
+    security-scan:
+        name: Secret Security Scanning
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: GitLeaks Scan
+              uses: gitleaks/gitleaks-action@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    deploy:
+        name: Build & Deploy to Production
+        runs-on: ubuntu-latest
+        needs: [verify, security-scan]
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         env:
             FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -37,7 +89,6 @@ jobs:
               with:
                   use-installer: true
 
-            # NEW STEP: Elevate the compiler to the global runner PATH
             - name: Install Global Compilers
               run: npm install -g esbuild typescript
 
