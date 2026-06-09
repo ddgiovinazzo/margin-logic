@@ -64,6 +64,9 @@ jobs:
             - name: Run Linter
               run: npm run lint
 
+            - name: Audit Workspace Dependencies
+              run: npm audit --audit-level=high --workspaces
+
             - name: Typecheck Backend
               run: npx --prefix backend tsc --build
 
