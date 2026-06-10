@@ -3,6 +3,10 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
+        "lint": "eslint",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "validate": "npm run format && npm run lint",
         "build": "sam build",
         "invoke:docker": "if [ -f env.json ]; then sam local invoke MarginLogicFunction -e events/search-event.json --env-vars env.json; else sam local invoke MarginLogicFunction -e events/search-event.json; fi",
         "start": "if [ -f env.json ]; then sam local start-api --env-vars env.json; else sam local start-api; fi",
