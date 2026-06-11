@@ -173,12 +173,10 @@ jobs:
             - name: Get API Gateway Base URL
               id: get-api-url
               run: |
-                  VITE_API_URL=$(aws cloudformation describe-stacks --stack-name margin-logic-dev --query "Stacks[0].Outputs[?OutputKey=='WebEndpoint'].OutputValue" --output text)
-                  echo "VITE_API_URL=${VITE_API_URL}" >> $GITHUB_ENV
+                  API_URL=$(aws cloudformation describe-stacks --stack-name margin-logic-dev --query "Stacks[0].Outputs[?OutputKey=='WebEndpoint'].OutputValue" --output text)
+                  echo "VITE_API_URL=${API_URL}" > frontend/.env
 
             # --- Frontend Development Build Verification ---
             - name: Build Frontend
               run: npm run build
               working-directory: ./frontend
-              env:
-                  VITE_API_URL: ${{ env.VITE_API_URL }}

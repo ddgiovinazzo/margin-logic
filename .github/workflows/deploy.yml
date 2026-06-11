@@ -176,15 +176,13 @@ jobs:
             - name: Get API Gateway Base URL
               id: get-api-url
               run: |
-                  VITE_API_URL=$(aws cloudformation describe-stacks --stack-name margin-logic-prod --query "Stacks[0].Outputs[?OutputKey=='WebEndpoint'].OutputValue" --output text)
-                  echo "VITE_API_URL=${VITE_API_URL}" >> $GITHUB_ENV
+                  API_URL=$(aws cloudformation describe-stacks --stack-name margin-logic-prod --query "Stacks[0].Outputs[?OutputKey=='WebEndpoint'].OutputValue" --output text)
+                  echo "VITE_API_URL=${API_URL}" > frontend/.env
 
             # --- Frontend Deployment (GitHub Pages) ---
             - name: Build Frontend
               run: npm run build
               working-directory: ./frontend
-              env:
-                  VITE_API_URL: ${{ env.VITE_API_URL }}
 
             - name: Setup Pages
               uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
