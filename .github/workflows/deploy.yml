@@ -80,7 +80,8 @@ jobs:
               run: npm ci --prefix backend
 
             - name: Typecheck Backend
-              run: npx --prefix backend tsc --build
+              run: npx tsc --build
+              working-directory: ./backend
 
             - name: Run Backend Tests
               run: npm test --prefix backend
@@ -104,7 +105,8 @@ jobs:
               run: npm ci --prefix frontend
 
             - name: Typecheck Frontend
-              run: npx --prefix frontend tsc --build
+              run: npx tsc --build
+              working-directory: ./frontend
 
             - name: Run Frontend Tests
               run: npm test --prefix frontend
