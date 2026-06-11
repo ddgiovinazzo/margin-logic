@@ -43,11 +43,11 @@
         ],
         "backend/**/*.{js,ts}": [
             "npm run lint --prefix backend -- --fix",
-            "npm run format --prefix backend"
+            "prettier --write"
         ],
         "frontend/**/*.{js,jsx,ts,tsx}": [
             "npm run lint --prefix frontend -- --fix",
-            "npm run format --prefix frontend"
+            "prettier --write"
         ]
     }
 }
