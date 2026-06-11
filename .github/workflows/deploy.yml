@@ -76,8 +76,8 @@ jobs:
                   node-version: 20
                   cache: "npm"
 
-            - name: Install backend dependencies
-              run: npm ci --prefix backend
+            - name: Install dependencies
+              run: npm ci
 
             - name: Typecheck Backend
               run: npx tsc --build
@@ -101,8 +101,8 @@ jobs:
                   node-version: 20
                   cache: "npm"
 
-            - name: Install frontend dependencies
-              run: npm ci --prefix frontend
+            - name: Install dependencies
+              run: npm ci
 
             - name: Typecheck Frontend
               run: npx tsc --build
@@ -140,6 +140,15 @@ jobs:
             - name: Checkout
               uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
+            - name: Set up Node.js
+              uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+              with:
+                  node-version: 20
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci
+
             # --- Backend Deployment (AWS SAM) ---#
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
@@ -155,10 +164,6 @@ jobs:
             - name: Install Global Compilers
               run: npm install -g esbuild typescript
 
-            - name: Install backend dependencies
-              run: npm ci
-              working-directory: ./backend
-
             - name: SAM Deploy
               run: npm run deploy
               working-directory: ./backend
@@ -170,17 +175,6 @@ jobs:
                   echo "VITE_API_URL=https://${API_ID}.execute-api.us-east-1.amazonaws.com/Prod" >> $GITHUB_ENV
 
             # --- Frontend Deployment (GitHub Pages) ---
-            - name: Set up Node.js
-              uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
-              with:
-                  node-version: 20
-                  cache: "npm"
-                  cache-dependency-path: "./frontend/package-lock.json"
-
-            - name: Install frontend dependencies
-              run: npm ci
-              working-directory: ./frontend
-
             - name: Build Frontend
               run: npm run build
               working-directory: ./frontend
