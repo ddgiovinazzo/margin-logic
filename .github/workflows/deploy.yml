@@ -127,6 +127,14 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    verify:
+        name: Code Verification & Testing
+        runs-on: ubuntu-latest
+        needs: [verify-global, verify-backend, verify-frontend, security-scan]
+        steps:
+            - name: Verification Success
+              run: echo "All verification checks passed!"
+
     deploy:
         name: Build & Deploy to Production
         runs-on: ubuntu-latest
