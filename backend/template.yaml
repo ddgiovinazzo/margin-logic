@@ -3,6 +3,25 @@ Transform: AWS::Serverless-2016-10-31
 Description: MarginLogic Default Setup
 
 Parameters:
+    Environment:
+        Type: String
+        Description: "AWS Deployment Environment Stage (dev or prod)"
+        Default: "dev"
+        AllowedValues:
+            - dev
+            - prod
+    EbayAppId:
+        Type: String
+        Description: "eBay Application ID (App ID)"
+        Default: ""
+    EbayCertId:
+        Type: String
+        Description: "eBay Certificate ID (Cert ID / Client Secret)"
+        Default: ""
+    EbayDevId:
+        Type: String
+        Description: "eBay Developer ID (Dev ID)"
+        Default: ""
     EbayClientId:
         Type: String
         Description: "eBay Application Client ID"
@@ -29,6 +48,11 @@ Globals:
             AllowOrigin: "'*'"
 
 Resources:
+    MarginLogicApi:
+        Type: AWS::Serverless::Api
+        Properties:
+            StageName: !Ref Environment
+
     MarginLogicFunction:
         Type: AWS::Serverless::Function
         Properties:
@@ -39,6 +63,9 @@ Resources:
                 Variables:
                     # Comma-separated whitelist for Dynamic Origin Reflection
                     ALLOWED_ORIGIN: "http://localhost:5173,https://ddgiovinazzo.github.io"
+                    EBAY_APP_ID: !Ref EbayAppId
+                    EBAY_CERT_ID: !Ref EbayCertId
+                    EBAY_DEV_ID: !Ref EbayDevId
                     EBAY_CLIENT_ID: !Ref EbayClientId
                     EBAY_CLIENT_SECRET: !Ref EbayClientSecret
                     EBAY_ENVIRONMENT: !Ref EbayEnvironment
@@ -48,6 +75,7 @@ Resources:
                     Properties:
                         Path: /search
                         Method: get
+                        RestApiId: !Ref MarginLogicApi
             AutoPublishAlias: live
             DeploymentPreference:
                 Type: Canary10Percent5Minutes
@@ -58,3 +86,8 @@ Resources:
                 Target: "es2020"
                 EntryPoints:
                     - src/app.ts
+
+Outputs:
+    WebEndpoint:
+        Description: "API Gateway endpoint URL"
+        Value: !Sub "https://${MarginLogicApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}"

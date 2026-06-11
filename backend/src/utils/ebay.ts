@@ -1,69 +1,5 @@
 import type { SearchItem } from "@shared/types";
-
-interface TokenCache {
-    accessToken: string;
-    expiresAt: number; // Timestamp in milliseconds
-}
-
-let cachedToken: TokenCache | null = null;
-
-/**
- * Retrieves an OAuth application access token using the Client Credentials grant.
- * Caches the token in memory to avoid repetitive token requests within the same execution environment.
- */
-async function getEbayAccessToken(
-    clientId: string,
-    clientSecret: string,
-    environment: string,
-): Promise<string> {
-    const isSandbox = environment === "sandbox";
-    const authUrl = isSandbox
-        ? "https://api.sandbox.ebay.com/identity/v1/oauth2/token"
-        : "https://api.ebay.com/identity/v1/oauth2/token";
-
-    // Reuse token if it has more than 60 seconds left before expiration
-    if (cachedToken && cachedToken.expiresAt > Date.now() + 60000) {
-        return cachedToken.accessToken;
-    }
-
-    const credentialsBase64 = Buffer.from(
-        `${clientId}:${clientSecret}`,
-    ).toString("base64");
-
-    const bodyParams = new URLSearchParams({
-        grant_type: "client_credentials",
-        scope: "https://api.ebay.com/oauth/api_scope",
-    });
-
-    const response = await fetch(authUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: `Basic ${credentialsBase64}`,
-        },
-        body: bodyParams.toString(),
-    });
-
-    if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(
-            `eBay OAuth request failed with status ${response.status}: ${errText}`,
-        );
-    }
-
-    const data = (await response.json()) as {
-        access_token: string;
-        expires_in: number;
-    };
-
-    cachedToken = {
-        accessToken: data.access_token,
-        // Calculate expiration epoch, buffer by subtracting 5 seconds
-        expiresAt: Date.now() + (data.expires_in - 5) * 1000,
-    };
-
-    return cachedToken.accessToken;
-}
+import { getEbayAccessToken } from "./tokenManager";
 
 interface EbayItemSummary {
     itemId: string;
@@ -86,17 +22,9 @@ interface EbaySearchResponse {
 /**
  * Queries the eBay Buy Browse API for item summaries matching a search query.
  */
-export async function searchEbayItems(
-    query: string,
-    clientId: string,
-    clientSecret: string,
-    environment: string,
-): Promise<SearchItem[]> {
-    const accessToken = await getEbayAccessToken(
-        clientId,
-        clientSecret,
-        environment,
-    );
+export async function searchEbayItems(query: string): Promise<SearchItem[]> {
+    const accessToken = await getEbayAccessToken();
+    const environment = process.env.EBAY_ENVIRONMENT || "sandbox";
 
     const isSandbox = environment === "sandbox";
     const baseUrl = isSandbox

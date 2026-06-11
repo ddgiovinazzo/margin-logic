@@ -71,7 +71,11 @@ To deploy changes to the live AWS environment:
 ```bash
 cd backend
 sam build
-sam deploy --stack-name margin-logic-backend --resolve-s3 --capabilities CAPABILITY_IAM --no-confirm-changeset
+sam deploy --stack-name margin-logic-dev --resolve-s3 --capabilities CAPABILITY_IAM --no-confirm-changeset --parameter-overrides \
+    Environment=dev \
+    EbayAppId=$EBAY_APP_ID \
+    EbayCertId=$EBAY_CERT_ID \
+    EbayDevId=$EBAY_DEV_ID
 ```
 
 ---

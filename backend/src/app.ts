@@ -29,12 +29,12 @@ export const lambdaHandler = async (
             .trim()
             .toLowerCase();
 
-        const clientId = process.env.EBAY_CLIENT_ID;
-        const clientSecret = process.env.EBAY_CLIENT_SECRET;
-        const environment = process.env.EBAY_ENVIRONMENT || "sandbox";
+        const appId = process.env.EBAY_APP_ID || process.env.EBAY_CLIENT_ID;
+        const certId =
+            process.env.EBAY_CERT_ID || process.env.EBAY_CLIENT_SECRET;
 
         // Fallback to mock data if eBay credentials are not configured
-        if (!clientId || !clientSecret) {
+        if (!appId || !certId) {
             console.warn(
                 "eBay credentials not configured. Falling back to mock data.",
             );
@@ -118,12 +118,7 @@ export const lambdaHandler = async (
 
         // Fetch real search results from eBay API
         try {
-            const results = await searchEbayItems(
-                query,
-                clientId,
-                clientSecret,
-                environment,
-            );
+            const results = await searchEbayItems(query);
             return {
                 statusCode: 200,
                 headers,
