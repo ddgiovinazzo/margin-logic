@@ -11,6 +11,18 @@ Parameters:
         Type: String
         Description: "eBay Application Client Secret ID (Cert ID)"
         Default: ""
+    EbayAppId:
+        Type: String
+        Description: "eBay Application ID (App ID)"
+        Default: ""
+    EbayCertId:
+        Type: String
+        Description: "eBay Certificate ID (Cert ID / Client Secret)"
+        Default: ""
+    EbayDevId:
+        Type: String
+        Description: "eBay Developer ID (Dev ID)"
+        Default: ""
     EbayEnvironment:
         Type: String
         Description: "eBay API environment (sandbox or production)"
@@ -39,6 +51,9 @@ Resources:
                 Variables:
                     # Comma-separated whitelist for Dynamic Origin Reflection
                     ALLOWED_ORIGIN: "http://localhost:5173,https://ddgiovinazzo.github.io"
+                    EBAY_APP_ID: !Ref EbayAppId
+                    EBAY_CERT_ID: !Ref EbayCertId
+                    EBAY_DEV_ID: !Ref EbayDevId
                     EBAY_CLIENT_ID: !Ref EbayClientId
                     EBAY_CLIENT_SECRET: !Ref EbayClientSecret
                     EBAY_ENVIRONMENT: !Ref EbayEnvironment
