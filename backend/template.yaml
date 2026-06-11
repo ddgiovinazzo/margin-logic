@@ -3,14 +3,13 @@ Transform: AWS::Serverless-2016-10-31
 Description: MarginLogic Default Setup
 
 Parameters:
-    EbayClientId:
+    Environment:
         Type: String
-        Description: "eBay Application Client ID"
-        Default: ""
-    EbayClientSecret:
-        Type: String
-        Description: "eBay Application Client Secret ID (Cert ID)"
-        Default: ""
+        Description: "AWS Deployment Environment Stage (dev or prod)"
+        Default: "dev"
+        AllowedValues:
+            - dev
+            - prod
     EbayAppId:
         Type: String
         Description: "eBay Application ID (App ID)"
@@ -23,6 +22,14 @@ Parameters:
         Type: String
         Description: "eBay Developer ID (Dev ID)"
         Default: ""
+    EbayClientId:
+        Type: String
+        Description: "eBay Application Client ID"
+        Default: ""
+    EbayClientSecret:
+        Type: String
+        Description: "eBay Application Client Secret ID (Cert ID)"
+        Default: ""
     EbayEnvironment:
         Type: String
         Description: "eBay API environment (sandbox or production)"
@@ -30,13 +37,6 @@ Parameters:
         AllowedValues:
             - sandbox
             - production
-    Environment:
-        Type: String
-        Description: "AWS Deployment Environment Stage (dev or prod)"
-        Default: "dev"
-        AllowedValues:
-            - dev
-            - prod
 
 Globals:
     Api:

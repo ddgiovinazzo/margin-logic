@@ -32,21 +32,6 @@ sam build
 
 # Deploying
 echo "Running sam deploy..."
-# Construct parameter overrides dynamically
-OVERRIDES=()
-if [ -n "$EBAY_APP_ID" ]; then
-    OVERRIDES+=("EbayAppId=$EBAY_APP_ID")
-fi
-if [ -n "$EBAY_CERT_ID" ]; then
-    OVERRIDES+=("EbayCertId=$EBAY_CERT_ID")
-fi
-if [ -n "$EBAY_DEV_ID" ]; then
-    OVERRIDES+=("EbayDevId=$EBAY_DEV_ID")
-fi
-OVERRIDES+=("Environment=$ENV_NAME")
-OVERRIDES+=("EbayEnvironment=$EBAY_ENV")
-
-echo "Using parameter overrides: ${OVERRIDES[*]}"
 
 sam deploy \
     --stack-name "$STACK_NAME" \
@@ -54,7 +39,11 @@ sam deploy \
     --capabilities CAPABILITY_IAM \
     --no-confirm-changeset \
     --no-fail-on-empty-changeset \
-    --parameter-overrides "${OVERRIDES[@]}"
+    --parameter-overrides \
+        Environment="$ENV_NAME" \
+        EbayAppId="$EBAY_APP_ID" \
+        EbayCertId="$EBAY_CERT_ID" \
+        EbayDevId="$EBAY_DEV_ID"
 
 echo "=========================================================="
 echo "Deployment to $STACK_NAME completed successfully!"
