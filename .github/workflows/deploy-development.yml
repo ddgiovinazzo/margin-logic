@@ -174,7 +174,7 @@ jobs:
               id: get-api-url
               run: |
                   API_ID=$(aws apigateway get-rest-apis --query "items[?name=='margin-logic-dev'].id" --output text)
-                  echo "VITE_API_URL=https://${API_ID}.execute-api.us-east-1.amazonaws.com/Prod" >> $GITHUB_ENV
+                  echo "VITE_API_URL=https://${API_ID}.execute-api.us-east-1.amazonaws.com/dev" >> $GITHUB_ENV
 
             # --- Frontend Development Build Verification ---
             - name: Build Frontend

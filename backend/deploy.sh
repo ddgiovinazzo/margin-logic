@@ -14,9 +14,11 @@ fi
 # Determine the final stack name dynamically
 if [ "$BRANCH" = "main" ]; then
     STACK_NAME="margin-logic-prod"
+    ENV_NAME="prod"
     EBAY_ENV="production"
 else
     STACK_NAME="margin-logic-dev"
+    ENV_NAME="dev"
     EBAY_ENV="sandbox"
 fi
 
@@ -41,6 +43,7 @@ fi
 if [ -n "$EBAY_DEV_ID" ]; then
     OVERRIDES+=("EbayDevId=$EBAY_DEV_ID")
 fi
+OVERRIDES+=("Environment=$ENV_NAME")
 OVERRIDES+=("EbayEnvironment=$EBAY_ENV")
 
 echo "Using parameter overrides: ${OVERRIDES[*]}"

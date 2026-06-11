@@ -30,6 +30,13 @@ Parameters:
         AllowedValues:
             - sandbox
             - production
+    Environment:
+        Type: String
+        Description: "AWS Deployment Environment Stage (dev or prod)"
+        Default: "dev"
+        AllowedValues:
+            - dev
+            - prod
 
 Globals:
     Api:
@@ -41,6 +48,11 @@ Globals:
             AllowOrigin: "'*'"
 
 Resources:
+    MarginLogicApi:
+        Type: AWS::Serverless::Api
+        Properties:
+            StageName: !Ref Environment
+
     MarginLogicFunction:
         Type: AWS::Serverless::Function
         Properties:
@@ -63,6 +75,7 @@ Resources:
                     Properties:
                         Path: /search
                         Method: get
+                        RestApiId: !Ref MarginLogicApi
             AutoPublishAlias: live
             DeploymentPreference:
                 Type: Canary10Percent5Minutes
