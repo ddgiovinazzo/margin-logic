@@ -5,21 +5,37 @@ updates:
       directory: "/"
       schedule:
           interval: "weekly"
+      groups:
+          action-updates:
+              patterns:
+                  - "*"
 
     # Maintain root package.json dependencies
     - package-ecosystem: "npm"
       directory: "/"
       schedule:
           interval: "weekly"
+      groups:
+          root-npm-updates: # 👈 Distinct group name
+              patterns:
+                  - "*"
 
     # Maintain backend package.json dependencies
     - package-ecosystem: "npm"
       directory: "/backend"
       schedule:
           interval: "weekly"
+      groups:
+          backend-npm-updates: # 👈 Distinct group name
+              patterns:
+                  - "*"
 
     # Maintain frontend package.json dependencies
     - package-ecosystem: "npm"
       directory: "/frontend"
       schedule:
           interval: "weekly"
+      groups:
+          frontend-npm-updates: # 👈 Distinct group name
+              patterns:
+                  - "*"
