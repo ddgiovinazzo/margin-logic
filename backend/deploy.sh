@@ -40,10 +40,11 @@ sam deploy \
     --no-confirm-changeset \
     --no-fail-on-empty-changeset \
     --parameter-overrides \
-        Environment="$ENV_NAME" \
-        EbayAppId="$EBAY_APP_ID" \
-        EbayCertId="$EBAY_CERT_ID" \
-        EbayDevId="$EBAY_DEV_ID"
+        "Environment=$ENV_NAME" \
+        "EbayAppId=$EBAY_APP_ID" \
+        "EbayCertId=$EBAY_CERT_ID" \
+        "EbayDevId=$EBAY_DEV_ID" \
+        "EbayEnvironment=$EBAY_ENV"
 
 echo "=========================================================="
 echo "Deployment to $STACK_NAME completed successfully!"

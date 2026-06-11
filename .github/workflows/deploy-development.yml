@@ -20,8 +20,8 @@ on:
     workflow_dispatch:
 
 concurrency:
-    group: "development-deploy"
-    cancel-in-progress: true
+    group: development-deployments
+    cancel-in-progress: false # 👈 Forces an orderly queue
 
 env:
     FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
