@@ -29,9 +29,8 @@ export const lambdaHandler = async (
             .trim()
             .toLowerCase();
 
-        const appId = process.env.EBAY_APP_ID || process.env.EBAY_CLIENT_ID;
-        const certId =
-            process.env.EBAY_CERT_ID || process.env.EBAY_CLIENT_SECRET;
+        const appId = process.env.EBAY_APP_ID;
+        const certId = process.env.EBAY_CERT_ID;
 
         // Fallback to mock data if eBay credentials are not configured
         if (!appId || !certId) {
