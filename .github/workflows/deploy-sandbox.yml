@@ -155,23 +155,13 @@ jobs:
               run: npm ci
               working-directory: ./backend
 
-            - name: SAM Build
-              run: sam build
-              working-directory: ./backend
-
             - name: SAM Deploy
-              run: |
-                  sam deploy --stack-name margin-logic-backend-sandbox \
-                    --resolve-s3 \
-                    --capabilities CAPABILITY_IAM \
-                    --no-confirm-changeset \
-                    --no-fail-on-empty-changeset \
-                    --parameter-overrides \
-                      EbayAppId="${{ secrets.EBAY_APP_ID }}" \
-                      EbayCertId="${{ secrets.EBAY_CERT_ID }}" \
-                      EbayDevId="${{ secrets.EBAY_DEV_ID }}" \
-                      EbayEnvironment="sandbox"
+              run: npm run deploy
               working-directory: ./backend
+              env:
+                  EBAY_APP_ID: ${{ secrets.EBAY_APP_ID }}
+                  EBAY_CERT_ID: ${{ secrets.EBAY_CERT_ID }}
+                  EBAY_DEV_ID: ${{ secrets.EBAY_DEV_ID }}
 
             - name: Get API Gateway Base URL
               id: get-api-url

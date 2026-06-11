@@ -12,6 +12,7 @@
         "start": "if [ -f env.json ]; then sam local start-api --env-vars env.json; else sam local start-api; fi",
         "test": "tsc --build && node --test dist/**/*.test.js",
         "test:local": "tsx src/local-test.ts",
+        "deploy": "bash deploy.sh",
         "watch": "sam build --watch"
     },
     "keywords": [],

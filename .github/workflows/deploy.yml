@@ -157,12 +157,8 @@ jobs:
               run: npm ci
               working-directory: ./backend
 
-            - name: SAM Build
-              run: sam build
-              working-directory: ./backend
-
             - name: SAM Deploy
-              run: sam deploy --stack-name margin-logic-backend --resolve-s3 --capabilities CAPABILITY_IAM --no-confirm-changeset --no-fail-on-empty-changeset
+              run: npm run deploy
               working-directory: ./backend
 
             - name: Get API Gateway Base URL
