@@ -86,3 +86,8 @@ Resources:
                 Target: "es2020"
                 EntryPoints:
                     - src/app.ts
+
+Outputs:
+    WebEndpoint:
+        Description: "API Gateway endpoint URL"
+        Value: !Sub "https://${MarginLogicApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}"
