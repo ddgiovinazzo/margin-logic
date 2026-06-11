@@ -13,9 +13,11 @@ fi
 
 # Determine the final stack name dynamically
 if [ "$BRANCH" = "main" ]; then
-    STACK_NAME="$BASE_NAME"
+    STACK_NAME="margin-logic-prod"
+    EBAY_ENV="production"
 else
-    STACK_NAME="${BASE_NAME}-sandbox"
+    STACK_NAME="margin-logic-dev"
+    EBAY_ENV="sandbox"
 fi
 
 echo "=========================================================="
@@ -28,37 +30,28 @@ sam build
 
 # Deploying
 echo "Running sam deploy..."
-if [ "$BRANCH" = "main" ]; then
-    sam deploy \
-        --stack-name "$STACK_NAME" \
-        --resolve-s3 \
-        --capabilities CAPABILITY_IAM \
-        --no-confirm-changeset \
-        --no-fail-on-empty-changeset
-else
-    # For sandbox/dev branches, construct parameter overrides dynamically
-    OVERRIDES=()
-    if [ -n "$EBAY_APP_ID" ]; then
-        OVERRIDES+=("EbayAppId=$EBAY_APP_ID")
-    fi
-    if [ -n "$EBAY_CERT_ID" ]; then
-        OVERRIDES+=("EbayCertId=$EBAY_CERT_ID")
-    fi
-    if [ -n "$EBAY_DEV_ID" ]; then
-        OVERRIDES+=("EbayDevId=$EBAY_DEV_ID")
-    fi
-    OVERRIDES+=("EbayEnvironment=sandbox")
-
-    echo "Using parameter overrides: ${OVERRIDES[*]}"
-
-    sam deploy \
-        --stack-name "$STACK_NAME" \
-        --resolve-s3 \
-        --capabilities CAPABILITY_IAM \
-        --no-confirm-changeset \
-        --no-fail-on-empty-changeset \
-        --parameter-overrides "${OVERRIDES[@]}"
+# Construct parameter overrides dynamically
+OVERRIDES=()
+if [ -n "$EBAY_APP_ID" ]; then
+    OVERRIDES+=("EbayAppId=$EBAY_APP_ID")
 fi
+if [ -n "$EBAY_CERT_ID" ]; then
+    OVERRIDES+=("EbayCertId=$EBAY_CERT_ID")
+fi
+if [ -n "$EBAY_DEV_ID" ]; then
+    OVERRIDES+=("EbayDevId=$EBAY_DEV_ID")
+fi
+OVERRIDES+=("EbayEnvironment=$EBAY_ENV")
+
+echo "Using parameter overrides: ${OVERRIDES[*]}"
+
+sam deploy \
+    --stack-name "$STACK_NAME" \
+    --resolve-s3 \
+    --capabilities CAPABILITY_IAM \
+    --no-confirm-changeset \
+    --no-fail-on-empty-changeset \
+    --parameter-overrides "${OVERRIDES[@]}"
 
 echo "=========================================================="
 echo "Deployment to $STACK_NAME completed successfully!"

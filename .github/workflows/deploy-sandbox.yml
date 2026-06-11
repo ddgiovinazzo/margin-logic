@@ -130,7 +130,7 @@ jobs:
         runs-on: ubuntu-latest
         needs: [verify-global, verify-backend, verify-frontend, security-scan]
         if: github.ref == 'refs/heads/dev' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-        environment: ebay-sandbox
+        environment: dev
         permissions:
             contents: read
             id-token: write
@@ -151,7 +151,7 @@ jobs:
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
               with:
-                  role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+                  role-to-assume: ${{ secrets.AWS_ARN }}
                   aws-region: us-east-1
 
             - name: Set up AWS SAM CLI
@@ -173,7 +173,7 @@ jobs:
             - name: Get API Gateway Base URL
               id: get-api-url
               run: |
-                  API_ID=$(aws apigateway get-rest-apis --query "items[?name=='margin-logic-backend-sandbox'].id" --output text)
+                  API_ID=$(aws apigateway get-rest-apis --query "items[?name=='margin-logic-dev'].id" --output text)
                   echo "VITE_API_URL=https://${API_ID}.execute-api.us-east-1.amazonaws.com/Prod" >> $GITHUB_ENV
 
             # --- Frontend Sandbox Build Verification ---
